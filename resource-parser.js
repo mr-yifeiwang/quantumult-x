@@ -46,7 +46,6 @@ content0 = link0.indexOf("nsloon.com/openloon/import?plugin=") != -1 ? ToLink(li
 const Base64 = new Base64Code();
 var link1 = link0.split("#")[0]
 const qxpng = "https://raw.githubusercontent.com/crossutility/Quantumult-X/master/quantumult-x.png" // server sub-info link
-const rwrite_link = { "open-url": link1, "media-url": "https://shrtm.nu/x3o2" } // rewrite filter link
 const nan_link = { "open-url": link1, "media-url": qxpng } // nan error link
 const bug_link = { "open-url": "https://t.me/ShawnKOP_Parser_Bot", "media-url": "https://shrtm.nu/obcB" } // bug link
 const update_link = {"open-url" : "https://apps.apple.com/us/app/quantumult-x/id1443988620", "media-url": qxpng}
@@ -71,8 +70,6 @@ var Pjsonjq = version>=845? 0 : 1 // allow jsonjq from version 845
 var PNS=0 // 不支持的节点统计
 var NSList=["当前订阅内，不支持以下节点 ↘️ \n"] // 不支持节点列表
 
-// URL-Scheme 增加配置
-var ADDres = `quantumult-x:///add-resource?remote-resource=url-encoded-json`
 var RLink = `{
   "server_remote": [
     sremoteposition
@@ -156,7 +153,7 @@ function numToEmoji10(n) {
 const getValue = (fn, defaultVaule) => {
   try {
     return fn();
-  } catch (error) {
+  } catch {
     return defaultVaule;
   }
 };
@@ -216,7 +213,7 @@ function ParseUnknown(cnt){
       $notify("注意: 链接返回内容并非有效订阅"+ "[" + subtag + "]","提示: 请自行检查原始链接，返回内容 如下",JSON.stringify(cnt), bug_link)
     }
     
-  } catch(err) {
+  } catch {
     if (!/error|block|invalid|support/.test(cnt.toLowerCase())) {
     $notify(" 未能识别订阅 " + "[" + subtag + "] 的内容",  "注意: 将尝试直接导入Quantumult X \n 如认为是 BUG, 请点通知跳转并 [发送链接] 反馈", "订阅返回内容: 如下 \n"+cnt, bug_link);
   } else {
@@ -258,7 +255,7 @@ function ResourceParse() {
   } else if (type0 == "sub-http") {
     let url = VCheck(String(Base64.decode(content0.split("sub://")[1].split("#")[0])+", opt-parser=true, tag="+(new Date()).getTime()))
      RLink = RLink.replace("sremoteposition",url).replace("fremoteposition","").replace("rremoteposition","")
-    let ADDres0 = ADDres.replace("url-encoded-json",encodeURIComponent(RLink))
+    let ADDres0 = ADDRes.replace("url-encoded-json",encodeURIComponent(RLink))
     openlink = {"open-url": ADDres0}
     $notify("注意: 该链接为节点订阅, 请点击此通知跳转添加", url, ADDres0,openlink)
     flag = -1
@@ -267,10 +264,8 @@ function ResourceParse() {
     ParseUnknown(content0)
     flag = -1;
   } else if (type0 == "profile") {
-    $notify("注意: 该链接为完整配置文件, 请点击此通知跳转", "已忽略配置内远程资源自定义字段", ADDres, {"open-url": ADDres})
+    $notify("注意: 该链接为完整配置文件, 请点击此通知跳转", "已忽略配置内远程资源自定义字段", ADDRes, {"open-url": ADDRes})
     flag = -1;
-    total = ""
-  } else if (type0 == "JS-0") {
     total = ""
   }
 
@@ -278,7 +273,6 @@ function ResourceParse() {
   if (flag == 1) { //server 类型统一处理
     total = isQuanX(total.filter(Boolean).join("\n"))
     if (total.length > 0){
-      total = total
       total = TagCheck_QX(total).join("\n") //节点名检查
       total = Base64.encode(total) //强制节点类型 base64 加密后再导入 Quantumult X
       if (PNS !=0) {
@@ -606,15 +600,12 @@ function SCP2QX(subs) {
           rw = subs[i].replace(" - "," url ")
           nrw.push(rw)
         } else if(subs[i].split(" ")[2] == "header") { // rewrite header 类型
-          var pget = subs[i].split(" ")[0].split(".com")[1]
-          var pgetn = subs[i].split(" ")[1].split(".com")[1]
           rw = subs[i].split(" ")[0] + " url 302 " + subs[i].split(" ")[1]
           nrw.push(rw)
         } else if(subs[i].split(" ")[1] == "header-replace") { // rewrite header-replace 类型
           console.log(subs[i])
           var pget = subs[i].split("header-replace")[1].split(":")[0].trim()
-          var pgetn = subs[i].split("header-replace")[1].trim()
-          rw = subs[i].split(" ")[0] + " url request-header " +"(.+\\r\\n)"+pget+":.+(\\r\\n) request-header " + "$1" + pgetn + "$2"
+          rw = subs[i].split(" ")[0] + " url request-header " +"(.+\\r\\n)"+pget+":.+(\\r\\n) request-header " + "$1" + subs[i].split("header-replace")[1].trim() + "$2"
           nrw.push(rw)
         } else if(subs[i].indexOf(" _ reject") != -1) { // rewrite reject 类型(surge)
           rw = subs[i].split(" ")[0] + " url reject-200"
@@ -667,7 +658,6 @@ function Rewrite_Filter(subs) {
     var Nlist = [];
     var noteK = ["//", "#", ";"];
     var hnc = 0;
-    var dwrite = []
     var hostname = ""
     for (var i = 0; i < subs.length; i++) {
         subi = subs[i].trim();
@@ -684,20 +674,11 @@ function Rewrite_Filter(subs) {
         }
     }
 
-    if (Pntf0 != 0) {
-        nowrite = dwrite.length <= 10 ? emojino[dwrite.length] : dwrite.length
-        no1write = Nlist.length <= 10 ? emojino[Nlist.length] : Nlist.length
-        if (dwrite.length > 0) {
-          $notify("重写引用 -> " + "[" + subtag + "]", "已移除若干规则", "重写 rewrite 中已禁用以下" + nowrite + "个匹配项:" + "\n - " + dwrite.join("\n - "), rwrite_link)
-        }
-    }
-
     if (Nlist.length == 0 ) { 
       $notify("重写引用 -> " + "[" + subtag + "]", "解析后 rewrite 规则数为 0 条" , "注意: 请检查原始链接内容", nan_link) 
     }
     
     if (hostname != "") { Nlist.push(hostname) }
-    Nlist = Nlist
     return Nlist
 }
 //分流规则转换及过滤(in&out)，可用于 surge 及 quanx 的 rule-list
@@ -706,7 +687,6 @@ function Rule_Handle(subs) {
     ply = Ppolicy; //策略组
     var nlist = []
     var RuleK = ["//", "#", ";","[","^"]; //排除项目
-    var RuleK2 = ["host,", "-suffix,", "domain,", "-keyword,", "ip-cidr,", "ip-cidr6,",  "geoip,", "user-agent,", "ip6-cidr,", "ip-asn"];
     for (var i = 0; i < cnt.length; i++) {
         cc = cnt[i].replace(/^\s*\-\s/g,"").replace(/\"|\'/g,"").trim()
         if (!RuleK.some((item) => cc.toLowerCase().indexOf(item) == 0) && cc) {
@@ -1151,7 +1131,7 @@ function V2QX(subs, Pudp, Ptfo, Pcert0, PTls13) {
     mtd = "method=aes-128-gcm"
     try {
       tag = "tag=" + decodeURIComponent(ss.ps);
-    } catch (e) {
+    } catch {
       tag = "tag=" + ss.ps;
     }
     udp = Pudp == 1 ? "udp-relay=false" : "udp-relay=false";
@@ -1677,7 +1657,6 @@ function SVmess2QX(content) {
     var pmtd = "method=aes-128-gcm";
     var ptls13 = paraCheck(cnt, "tls13") == "true" ? "tls13=true" : "tls13=false";
     var pverify = cnt.replace(/ /g,"").indexOf("skip-cert-verify=false") != -1 ? "tls-verification=true" : "tls-verification=false";
-    pvefify = Pcert0 == 1? "tls-verification=true" : pverify ;
     if (paraCheck(cnt.replace(/tls13/, ""), "tls") == "true" && paraCheck(cnt.replace(/ws-header/, ""), "ws") == "true") {
         pobfs = "obfs=wss" + ", " + ptls13 + ", " + pverify
     } else if (paraCheck(cnt.replace(/ws-header/, ""), "ws") == "true") {
@@ -1727,7 +1706,6 @@ function Strojan2QX(content) {
   var ptfo = paraCheck(cnt, "tfo") == "true" ? "fast-open=true" : "fast-open=false";
   var pverify = cnt.replace(/ /g,"").indexOf("skip-cert-verify=false") != -1 ? "tls-verification=true" : "tls-verification=false";
   var phost = cnt.indexOf("sni")!=-1? "tls-host="+cnt.split("sni")[1].split(",")[0].split("=")[1]:""
-  pvefify = Pcert0 == 1? "tls-verification=true" : pverify ;
   var ptls13 = paraCheck(cnt, "tls13") == "true" ? "tls13=true" : "tls13=false";
   var nserver = "trojan= " + [ipport, pwd, ptls, ptfo, ptls13, phost,pverify, tag].filter(Boolean).join(", ");
   return nserver
@@ -1742,7 +1720,6 @@ function SATS2QX(content) {
     var pwd = "password=" + cnt.split("password")[1].split(",")[0].split("=")[1].trim();
     var ptls = "over-tls=true";
     var pverify = cnt.replace(/ /g,"").indexOf("skip-cert-verify=false") != -1 ? "tls-verification=true" : "tls-verification=false";
-    pvefify = Pcert0 == 1? "tls-verification=true" : pverify ;
     var phost = cnt.indexOf("sni")!=-1? "tls-host="+cnt.split("sni")[1].split(",")[0].split("=")[1]:""
     pudp = Pudp0 == -1 ? "udp-relay=false" : "udp-relay=true" // 默认开启
     var nserver = "anytls= " + [ipport, pwd, ptls, pverify, phost,pudp, tag].filter(Boolean).join(", ");
@@ -1764,7 +1741,6 @@ function Shttp2QX(content) {
   var ptfo = paraCheck(cnt, "tfo") == "true" ? "fast-open=true" : "fast-open=false";
   if (ptls == "over-tls=true") {
     var pverify = cnt.replace(/ /g,"").indexOf("skip-cert-verify=false") != -1 ? "tls-verification=true" : "tls-verification=false";
-    pvefify = Pcert0 == 1? "tls-verification=true" : pverify ;
     var ptls13 = paraCheck(cnt, "tls13") == "true" ? "tls13=true" : "tls13=false";
     ptls = ptls + ", " + pverify + ", " + ptls13
   }
@@ -1783,7 +1759,6 @@ function SS52QX(content) {
   var ptfo = paraCheck(cnt, "tfo") == "true" ? "fast-open=true" : "fast-open=false";
   if (ptls == "over-tls=true") {
     var pverify = cnt.replace(/ /g,"").indexOf("skip-cert-verify=false") != -1 ? "tls-verification=true" : "tls-verification=false";
-    pvefify = Pcert0 == 1? "tls-verification=true" : pverify ;
     var ptls13 = paraCheck(cnt, "tls13") == "true" ? "tls13=true" : "tls13=false";
     ptls = ptls + ", " + pverify + ", " + ptls13
   }
@@ -1890,7 +1865,6 @@ function LoonTLS2QX(content) {
     var phost = cnt.indexOf("sni")!=-1? "tls-host="+cnt.split("sni")[1].split(",")[0].split("=")[1]:""
     pudp = Pudp0 == -1 ? "udp-relay=false" : "udp-relay=true" // 默认开启
     var pverify = cnt.replace(/ /g,"").indexOf("skip-cert-verify=false") != -1 ? "tls-verification=true" : "tls-verification=false";
-    pvefify = Pcert0 == 1? "tls-verification=true" : pverify ;
     var nserver = "anytls= " + [ipport, pwd, ptls, pverify, phost,pudp, tag].filter(Boolean).join(", ");
     $notify("Loon","",nserver)
     return nserver
@@ -2466,9 +2440,6 @@ function Base64Code() {
     };
     var _atob = function (a) {
         return a.replace(/\S{1,4}/g, cb_decode);
-    };
-    var atob = function (a) {
-        return _atob(String(a).replace(/[^A-Za-z0-9\+\/]/g, ''));
     };
     var _decode = function (u) {
         return btou(_atob(u))
