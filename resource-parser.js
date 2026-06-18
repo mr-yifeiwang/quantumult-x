@@ -1,17 +1,6 @@
 /** 
-资源解析器 © Shawn [2026-05-29 08:09]
-
-发现 bug 请反馈: https://t.me/ShawnKOP_Parser_Bot
-TG 相关频道: https://t.me/QuanX_API
-使用教程: https://tinyurl.com/2jyygfom
-Thanks to @Jamie CHIEN, @M**F**, @c0lada, @Peng-YM, @vinewx, @love4taylor, @shadowdogy
-
-主要功能:
-1. 将其它格式的服务器订阅解析成 Quantumult X 格式。
-2. 转换 rewrite(重写) 与 filter(分流) 资源。
-3. 自动识别支持的资源类型并按默认行为解析。
-
-说明: 本版本不提供 URL 片段参数、自定义表单或用户控制的解析参数。
+ Quantumult X's resource parser, modified from KOP-XIAO/QuantumultX
+ version: 0.1.0
 */
 
 
