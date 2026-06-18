@@ -1,111 +1,108 @@
 /** 
-☑️ 资源解析器 ©𝐒𝐡𝐚𝐰𝐧  ⟦2026-05-29 08:09⟧
-----------------------------------------------------------
-🛠 发现 𝐁𝐔𝐆 请反馈: https://t.me/ShawnKOP_Parser_Bot
-⛳️ 关注 🆃🅶 相关频道: https://t.me/QuanX_API
-📖 使用 教程: https://tinyurl.com/2jyygfom
-🗣 🆃🄷🄰🄽🄺🅂 🆃🄾  @Jamie CHIEN, @M**F**, @c0lada, @Peng-YM, @vinewx, @love4taylor, @shadowdogy 
+资源解析器 © Shawn [2026-05-29 08:09]
 
-🤖 主要功能: 
-❶ 将其它格式的⟦服务器订阅⟧解析成 𝐐𝐮𝐚𝐧𝐭𝐮𝐦𝐮𝐥𝐭 𝐗 格式
-☑︎ 支持 𝐕2𝐫𝐚𝐲𝐍/𝗦𝗦(𝗥/𝗗)/𝗧𝗿𝗼𝗷𝗮𝗻/𝐕𝐋𝗲𝐬𝐬/𝗛𝗧𝗧𝗣(𝗦)/𝗔𝗻𝘆𝗧𝗟𝗦/𝗤𝘂𝗮𝗻𝘁𝘂𝗺𝘂𝗹𝘁(𝗫)/𝗦𝘂𝗿𝗴𝗲/𝐂𝐥𝐚𝐬𝐡/𝐒𝐡𝐚𝐝𝐨𝐰𝐫𝐨𝐜𝐤𝐞𝐭/𝐋𝐨𝐨𝐧 格式
-☑︎ 提供说明 1⃣️ 中的可选个性化参数(筛选、重命名 等)
-❷ 𝗿𝗲𝘄𝗿𝗶𝘁𝗲(重写) & 𝗳𝗶𝗹𝘁𝗲𝗿(分流) 的 转换 & 筛选 
-☑︎ 用于禁用/修改远程引用中某(几)项 𝗿𝗲𝘄𝗿𝗶𝘁𝗲/𝗵𝗼𝘀𝘁𝗻𝗮𝗺𝗲/𝗳𝗶𝗹𝘁𝗲𝗿
-☑︎ 𝐒𝐮𝐫𝐠𝐞/𝐂𝐥𝐚𝐬𝐡 类型规则 𝗹𝗶𝘀𝘁 与 模块 𝐦𝐨𝐝𝐮𝐥𝐞 的解析使用
-----------------------------------------------------------
-0️⃣ 在 ⟦订阅链接⟧ 后加 "#" 使用, 不同参数用 "&" 连接 
-⚠️ ☞ "你的订阅连接#emoji=1&tfo=1&in=香港+台湾"
-❖ 本地资源片段引用, 请将参数如 "#in=xxx&out=yyy" 填入资源片段的第 ① 行
-❖ 🚦 支持中文, "操作" 以下特殊字符时请先替换(URL-Encode) 🚦
-  ∎ "+"⇒"%2B", 空格⇒"%20", "@"⇒"%40", "&"⇒"%26", "."⇒"\.", ","⇒"%2C"
+发现 bug 请反馈: https://t.me/ShawnKOP_Parser_Bot
+TG 相关频道: https://t.me/QuanX_API
+使用教程: https://tinyurl.com/2jyygfom
+Thanks to @Jamie CHIEN, @M**F**, @c0lada, @Peng-YM, @vinewx, @love4taylor, @shadowdogy
 
-1️⃣ ⟦𝐬𝐞𝐫𝐯𝐞𝐫 节点⟧ ➠ 参数说明:
-⦿ emoji=1(国行设备用2)/-1, 添加/删除节点名内地区旗帜;
-⦿ udp=1/-1, tfo=1/-1, 分别强制开启(关闭) 𝐮𝐝𝐩-𝐫𝐞𝐥𝐚𝐲/𝐟𝐚𝐬𝐭-𝐨𝐩𝐞𝐧;
-⦿ uot=1, 开启 udp-over-tcp=true选项（仅限SS(R)）
-⦿ cert=1/-1, 分别开启/关闭 𝐭𝐥𝐬 证书验证(默认关闭);
-  ❖ csha/psha, tls-cert-sha256 以及 tls-pubkey-sha256 参数
-  ❖ alpn, 指定over-tls类型节点的alpn参数
-⦿ in, out, regex, regout 分别为 保留、删除、正则保留、正则删除 节点;
-  ❖ in/out 仅对节点名匹配生效, 多参数(逻辑"或")用 "+", 逻辑"与"用 "." 表示;
-  ❖ regex/regout 对节点的完整信息进行匹配(类型、端口、加密等);
-  ❖ 示范: "in=香港.0\.2倍率+台湾&out=BGP&regex=iplc"
-⦿ rename 重命名, "旧名@新名", "前缀@", "@后缀", 用 "+" 连接多个参数;
-  ❖ 删除字段: "字段1.字段2☠️", 想删除 "." 时用 "\." 替代
-  ❖ 示范: "rename=香港@𝐇𝐊+[𝐒𝐒]@+@[1𝐗]+流量.0\.2☠️"
-  ❖ 默认 emoji 先生效, 如想调换顺序, 请用 rrname 参数
-⦿ replace 正则替换节点中字段, 可用于重命名/更改加密方式等
-  ❖ replace=regex1@𝘀𝘁𝗿1+regex2@𝘀𝘁𝗿2
-⦿ ptn/npt=1-8, 将节点名英文/数字替换成样式 ⇒ 🅰/🄰/𝐀/𝗮/𝔸/𝕒/ᵃ/ᴬ, ①\❶\⓵\𝟙\¹\₁\𝟏\𝟷
-⦿ delreg, 利用正则表达式来删除 "节点名" 中的字段(⚠️ 慎用)
-⦿ UA=1，将尝试使用 shadowrocket 的UA重新获取节点信息
-⦿ aead=-1, 关闭 Vmess 的 AEAD 参数
-⦿ host=xxx, 修改已有 host , 如要增加host，请用☠️结尾
-⦿ obfs=vhttp/shttp, 指定 obfs=shadowsocks-http 或 obfs=vmess-http 的特殊需求
-⦿ tsession=0/1/2, 0/1 代表关闭 tls-session-ticket/reuse，2 表示全部关闭
-⦿ checkurl=xxx , 指定 server_check_url 参数
-⦿ sort=1/-1/x/参数规则, 按节点名 正/逆/随机/参数规则 排序
-  ❖ 参数规则是正则表达式或简单关键词, 用"<" 或 ">" 连接
-  ❖ sort=🇭🇰>🇸🇬>🇯🇵>🇺🇸 , 靠前排序
-  ❖ sort=IEPL<IPLC<BGP , 靠后排序
-⦿ info=1, 开启通知提示机场 ✈️ 流量信息(如有提供);
-⦿ flow=2022-06-02:1000:54, 订阅到期时间:总流量:已用流量
-⦿ 占位符，可用于 rename/replace 等操作
-  ❖ $type0/1/2/3/4/5/6/7 占位符，将节点类型(ss/ssr/vmess 等)作为可操作参数，如
-    ∎ rename=@|$type2
-    ∎ 样式分别为 "𝐬𝐬","𝐒𝐒","🅢🅢","🆂🆂","ⓢⓢ","🅂🅂","𝕊𝕊","ˢˢ"
-  ❖ $index0/1/2/3/4/5/6/7/8 占位符，将节点的序号作为可操作参数，如
-    ∎ rename=@「$index1」
-    ∎ 样式分别为 1\①\❶\⓵\𝟙\¹\₁\𝟏\𝟷
-  ❖ $emoji1/2 占位符, 将emoji(🇭🇰 等)作为可操作参数
-    ∎ rename=@「$emoji1」
-  ❖ $tag 占位符，将订阅的 tag 作为可操作参数，如
-    ∎ 可接数字以单独给 tag 添加字母/数字样式
-    ∎ rename=@「$tag34」, 样式同下边的 ptn/npt
-⦿ ⟦进阶参数⟧: 𝘀𝗳𝗶𝗹𝘁𝗲𝗿/𝘀𝗿𝗲𝗻𝗮𝗺𝗲, 传入一段 base64 编码的脚本, 可用于更为复杂的[过滤/重命名] 需求
-  ❖ 说明: https://github.com/KOP-XIAO/QuantumultX/pull/9
+主要功能:
+1. 将其它格式的[服务器订阅]解析成 Quantumult X 格式
+- 支持 V2rayN/SS(R/D)/Trojan/VLess/HTTP(S)/AnyTLS/Quantumult(X)/Surge/Clash/Shadowrocket/Loon 格式
+- 提供说明 1 中的可选个性化参数(筛选、重命名 等)
+2. rewrite(重写) & filter(分流) 的转换 & 筛选
+- 用于禁用/修改远程引用中某(几)项 rewrite/hostname/filter
+- Surge/Clash 类型规则 list 与模块 module 的解析使用
 
-2⃣️ ⟦𝐫𝐞𝐰𝐫𝐢𝐭𝐞 重写⟧/⟦𝐟𝐢𝐥𝐭𝐞𝐫 分流⟧ ➠ 参数说明:
-⦿ in, out, 根据关键词 保留/禁用 相关分流、重写规则;
-⦿ inhn, outhn, “保留/删除”主机名(𝒉𝒐𝒔𝒕𝒏𝒂𝒎𝒆);
-  ❖ 示范: 禁用 "淘宝比价" 及 "weibo" 的 js 同主机名
-  𝐡𝐭𝐭𝐩𝐬://𝐦𝐲𝐥𝐢𝐬𝐭#out=tb_price.js+wb_ad.js&outhn=weibo
-⦿ regex/regout, 正则保留/删除, 请自行折腾正则表达式;
-  ❖ 可与 in(hn)/out(hn) 一起使用，in(hn)/out(hn) 会优先执行;
-  ❖ 对 𝒉𝒐𝒔𝒕𝒏𝒂𝒎𝒆 & 𝐫𝐞𝐰𝐫𝐢𝐭𝐞/𝐟𝐢𝐥𝐭𝐞𝐫 同时生效(⚠️ 慎用)
-⦿ policy 参数, 用于直接指定策略组，或为 𝐒𝐮𝐫𝐠𝐞 类型 𝗿𝘂𝗹𝗲-𝘀𝗲𝘁 生成策略组(默认"𝐒𝐡𝐚𝐰𝐧"策略组);
-⦿ pset=regex1@policy1+regex2@policy2, 为同一分流规则中不同关键词(允许正则表达式)指定不同策略组;
-⦿ replace 参数, 正则替换 𝐟𝐢𝐥𝐭𝐞𝐫/𝐫𝐞𝐰𝐫𝐢𝐭𝐞 内容, regex@newregex;
-  ❖ 将淘宝比价中脚本替换成 lite 版本(如有此版本的脚本)
-    ∎ replace=(price)(.*)@$1_lite$2
-⦿ dst=rewrite/filter，分别为将 𝐦𝐨𝐝𝐮𝐥𝐞&𝗿𝘂𝗹𝗲-𝘀𝗲𝘁 转换成 重写/分流;
-  ❖ ⚠️ 默认将 𝐦𝐨𝐝𝐮𝐥𝐞 转换到重写, 𝗿𝘂𝗹𝗲-𝘀𝗲𝘁 转成分流
-  ❖ ⚠️ 把 𝗿𝘂𝗹𝗲-𝘀𝗲𝘁 中 url-regex 转成重写时, 必须要加 dst=rewrite;
-  ❖ ⚠️ 把 𝐦𝐨𝐝𝐮𝐥𝐞 中的分流规则转换时, 必须要加 dst=filter
-⦿ cdn=1, 将 github 脚本的地址转换成免翻墙 fastly.jsdelivr.net/gh
-⦿ fcr=1/2/3, 为分流规则添加 force-cellular/multi-interface/multi-interface-balance 参数，强制移动数据/混合数据/负载均衡
-⦿ via=接口, 为分流规则添加 via-interface 参数, 0 表示 via-interface=%TUN%
-⦿ relay=目标策略名, 批量将节点订阅转换为ip/host规则，用于实现代理链
+0. 在[订阅链接]后加 "#" 使用, 不同参数用 "&" 连接
+注意: "你的订阅连接#emoji=1&tfo=1&in=香港+台湾"
+- 本地资源片段引用, 请将参数如 "#in=xxx&out=yyy" 填入资源片段的第一行
+- 支持中文, 操作以下特殊字符时请先替换(URL-Encode)
+  - "+" -> "%2B", 空格 -> "%20", "@" -> "%40", "&" -> "%26", "." -> "\.", "," -> "%2C"
 
-3⃣️ 其他参数
-⦿ 通知参数 ntf=0/1, 用于 关闭/打开 资源解析器的提示通知
-  ❖ 𝗿𝗲𝘄𝗿𝗶𝘁𝗲/𝗳𝗶𝗹𝘁𝗲𝗿 默认“开启”通知提示, 以防规则误删除
-  ❖ 𝘀𝗲𝗿𝘃𝗲𝗿 资源解析则默认”关闭“通知提示
-⦿ 类型参数 type=domain-set/rule/module/list/nodes
-  ❖ 当解析器未能正确识别类型时, 可尝试使用此参数强制指定
-⦿ 隐藏参数 hide=0, 禁用筛除的分流/重写，默认方式为删除
-⦿ profile=111 , URL-Scheme 添加 QuanX 类型配置中远程资源
-----------------------------------------------------------
+1. [server 节点] 参数说明:
+- emoji=1(国行设备用2)/-1, 添加/删除节点名内地区旗帜;
+- udp=1/-1, tfo=1/-1, 分别强制开启(关闭) udp-relay/fast-open;
+- uot=1, 开启 udp-over-tcp=true 选项（仅限 SS(R)）
+- cert=1/-1, 分别开启/关闭 tls 证书验证(默认关闭);
+  - csha/psha, tls-cert-sha256 以及 tls-pubkey-sha256 参数
+  - alpn, 指定 over-tls 类型节点的 alpn 参数
+- in, out, regex, regout 分别为 保留、删除、正则保留、正则删除 节点;
+  - in/out 仅对节点名匹配生效, 多参数(逻辑"或")用 "+", 逻辑"与"用 "." 表示;
+  - regex/regout 对节点的完整信息进行匹配(类型、端口、加密等);
+  - 示范: "in=香港.0\.2倍率+台湾&out=BGP&regex=iplc"
+- rename 重命名, "旧名@新名", "前缀@", "@后缀", 用 "+" 连接多个参数;
+  - 删除字段: "字段1.字段2[删除标记]", 想删除 "." 时用 "\." 替代
+  - 示范: "rename=香港@HK+[SS]@+@[1X]+流量.0\.2[删除标记]"
+  - 默认 emoji 先生效, 如想调换顺序, 请用 rrname 参数
+- replace 正则替换节点中字段, 可用于重命名/更改加密方式等
+  - replace=regex1@str1+regex2@str2
+- ptn/npt=1-8, 将节点名英文/数字替换成不同样式
+- delreg, 利用正则表达式来删除 "节点名" 中的字段(慎用)
+- UA=1，将尝试使用 shadowrocket 的 UA 重新获取节点信息
+- aead=-1, 关闭 Vmess 的 AEAD 参数
+- host=xxx, 修改已有 host；如要增加 host，请使用删除标记结尾
+- obfs=vhttp/shttp, 指定 obfs=shadowsocks-http 或 obfs=vmess-http 的特殊需求
+- tsession=0/1/2, 0/1 代表关闭 tls-session-ticket/reuse，2 表示全部关闭
+- checkurl=xxx, 指定 server_check_url 参数
+- sort=1/-1/x/参数规则, 按节点名 正/逆/随机/参数规则 排序
+  - 参数规则是正则表达式或简单关键词, 用 "<" 或 ">" 连接
+  - sort=香港>新加坡>日本>美国, 靠前排序
+  - sort=IEPL<IPLC<BGP, 靠后排序
+- info=1, 开启通知提示机场流量信息(如有提供);
+- flow=2022-06-02:1000:54, 订阅到期时间:总流量:已用流量
+- 占位符，可用于 rename/replace 等操作
+  - $type0/1/2/3/4/5/6/7 占位符，将节点类型(ss/ssr/vmess 等)作为可操作参数，如
+    - rename=@|$type2
+    - 样式由 ptn 参数决定
+  - $index0/1/2/3/4/5/6/7/8 占位符，将节点的序号作为可操作参数，如
+    - rename=@「$index1」
+    - 样式由 npt 参数决定
+  - $emoji1/2 占位符, 将 emoji 作为可操作参数
+    - rename=@「$emoji1」
+  - $tag 占位符，将订阅的 tag 作为可操作参数，如
+    - 可接数字以单独给 tag 添加字母/数字样式
+    - rename=@「$tag34」, 样式同下边的 ptn/npt
+- [进阶参数]: sfilter/srename, 传入一段 base64 编码的脚本, 可用于更为复杂的[过滤/重命名]需求
+  - 说明: https://github.com/KOP-XIAO/QuantumultX/pull/9
+
+2. [rewrite 重写]/[filter 分流] 参数说明:
+- in, out, 根据关键词 保留/禁用 相关分流、重写规则;
+- inhn, outhn, “保留/删除”主机名(hostname);
+  - 示范: 禁用 "淘宝比价" 及 "weibo" 的 js 同主机名
+  https://mylist#out=tb_price.js+wb_ad.js&outhn=weibo
+- regex/regout, 正则保留/删除, 请自行折腾正则表达式;
+  - 可与 in(hn)/out(hn) 一起使用，in(hn)/out(hn) 会优先执行;
+  - 对 hostname & rewrite/filter 同时生效(慎用)
+- policy 参数, 用于直接指定策略组，或为 Surge 类型 rule-set 生成策略组(默认 "Shawn" 策略组);
+- pset=regex1@policy1+regex2@policy2, 为同一分流规则中不同关键词(允许正则表达式)指定不同策略组;
+- replace 参数, 正则替换 filter/rewrite 内容, regex@newregex;
+  - 将淘宝比价中脚本替换成 lite 版本(如有此版本的脚本)
+    - replace=(price)(.*)@$1_lite$2
+- dst=rewrite/filter，分别为将 module & rule-set 转换成 重写/分流;
+  - 默认将 module 转换到重写, rule-set 转成分流
+  - 把 rule-set 中 url-regex 转成重写时, 必须要加 dst=rewrite;
+  - 把 module 中的分流规则转换时, 必须要加 dst=filter
+- cdn=1, 将 github 脚本的地址转换成免翻墙 fastly.jsdelivr.net/gh
+- fcr=1/2/3, 为分流规则添加 force-cellular/multi-interface/multi-interface-balance 参数，强制移动数据/混合数据/负载均衡
+- via=接口, 为分流规则添加 via-interface 参数, 0 表示 via-interface=%TUN%
+- relay=目标策略名, 批量将节点订阅转换为 ip/host 规则，用于实现代理链
+
+3. 其他参数
+- 通知参数 ntf=0/1, 用于关闭/打开资源解析器的提示通知
+  - rewrite/filter 默认“开启”通知提示, 以防规则误删除
+  - server 资源解析则默认“关闭”通知提示
+- 类型参数 type=domain-set/rule/module/list/nodes
+  - 当解析器未能正确识别类型时, 可尝试使用此参数强制指定
+- 隐藏参数 hide=0, 禁用筛除的分流/重写，默认方式为删除
+- profile=111, URL-Scheme 添加 QuanX 类型配置中远程资源
 */
 
 /**
-* 使用说明，
-0️⃣ 在QuantumultX 配置文件中[general] 部分，加入 
+* 使用说明：
+在 Quantumult X 配置文件中 [general] 部分加入：
 resource_parser_url = https://raw.githubusercontent.com/KOP-XIAO/QuantumultX/master/Scripts/resource-parser.js
-⚠️⚠️如提示"没有自定义解析器"，请长按右下角图标后点击左侧刷新按钮，更新资源，后台退出 app，直到出现解析器说明
-
-------------------------------
+如提示“没有自定义解析器”，请长按右下角图标后点击左侧刷新按钮，更新资源，后台退出 app，直到出现解析器说明。
 */
 
 // ==== Parser Helper UI by Quantumult-X (918+) ====
@@ -124,27 +121,27 @@ $parser.hashSchema = function () {
   function _ptnOptions() {
     return [
       { label: "原样",         value: ""  },
-      { label: "🅰 字母方块",   value: "1" },
-      { label: "🄰 字母方块（实）", value: "2" },
-      { label: "𝐀 加粗",        value: "3" },
-      { label: "𝗮 加粗小写",    value: "4" },
-      { label: "𝔸 双线",        value: "5" },
-      { label: "𝕒 双线小写",    value: "6" },
-      { label: "ᵃ 上标",        value: "7" },
-      { label: "ᴬ 大写上标",    value: "8" }
+      { label: "字母方块",       value: "1" },
+      { label: "字母方块（实）", value: "2" },
+      { label: "加粗大写",       value: "3" },
+      { label: "加粗小写",       value: "4" },
+      { label: "双线大写",       value: "5" },
+      { label: "双线小写",       value: "6" },
+      { label: "上标小写",       value: "7" },
+      { label: "上标大写",       value: "8" }
     ];
   }
   function _nptOptions() {
     return [
       { label: "原样",         value: ""  },
-      { label: "①",            value: "1" },
-      { label: "❶",            value: "2" },
-      { label: "⓵",            value: "3" },
-      { label: "𝟙",            value: "4" },
-      { label: "¹",            value: "5" },
-      { label: "₁",            value: "6" },
-      { label: "𝟏",            value: "7" },
-      { label: "𝟷",            value: "8" }
+      { label: "数字样式 1",    value: "1" },
+      { label: "数字样式 2",    value: "2" },
+      { label: "数字样式 3",    value: "3" },
+      { label: "数字样式 4",    value: "4" },
+      { label: "数字样式 5",    value: "5" },
+      { label: "数字样式 6",    value: "6" },
+      { label: "数字样式 7",    value: "7" },
+      { label: "数字样式 8",    value: "8" }
     ];
   }
 
@@ -153,7 +150,7 @@ $parser.hashSchema = function () {
     version: 1,
     sections: [
       { type: "group",
-        title: "✈️ 订阅获取",
+        title: "订阅获取",
         items: [
           { type: "switch", key: "UA", label: "User-Agent 替换",
             onValue: "1", offValue: "" ,
@@ -162,7 +159,7 @@ $parser.hashSchema = function () {
       },
       {
         type: "group",
-        title: "🎲 筛选&排序",
+        title: "筛选与排序",
         items: [
           { type: "tags",   key: "in",     label: "保留（in）",
             description: "按节点名关键字保留。每行一个关键字表示\"或\"；同行用 . 分隔表示\"与\"。例：另起一行填 香港、台湾 表示含其一即可；同一行填 香港.IPLC 表示同时含香港和 IPLC。",
@@ -175,17 +172,17 @@ $parser.hashSchema = function () {
           { type: "text",   key: "regout", label: "正则删除（regout）",
             description: "对节点完整信息正则匹配以删除节点", placeholder: "" },
           { type: "text",   key: "sort", label: "节点排序（sort）",
-            description: "对节点进行排序，参数是1(正序)/-1（逆序）/x（随机排序）/自定义规则（用>或者<连接）", placeholder: "🇭🇰>🇯🇵>🇺🇸" }
+            description: "对节点进行排序，参数是1(正序)/-1（逆序）/x（随机排序）/自定义规则（用>或者<连接）", placeholder: "香港>日本>美国" }
         ]
       },
       {
         type: "group",
-        title: "⛰️ 参数调整",
+        title: "参数调整",
         items: [
-          { type: "select", key: "emoji", label: "Emoji 旗帜（🇨🇳🇭🇰🇺🇸...）",
+          { type: "select", key: "emoji", label: "地区旗帜",
             description: "添加/删除节点名地区旗帜", options: _emojiOptions() },
           { type: "text",   key: "replace", label: "正则替换节点信息（replace）",
-            description: "替换节点信息（⚠️ 可匹配所有内容 ⚠️），regex1@str1+regex2@str2", placeholder: "" },
+            description: "替换节点信息（可匹配所有内容，请慎用），regex1@str1+regex2@str2", placeholder: "" },
           { type: "switch", key: "udp",   label: "UDP Relay",
             onValue: "1", offValue: "-1" },
           { type: "switch", key: "tfo",   label: "Fast Open",
@@ -199,7 +196,7 @@ $parser.hashSchema = function () {
           { type: "text",   key: "alpn",  label: "ALPN",
             description: "over-tls 节点的 ALPN", placeholder: "h2" },
           { type: "text",   key: "host",  label: "Host",
-            description: "修改已有 host；增加 host 请加 ☠️ 结尾",
+            description: "修改已有 host；增加 host 请使用删除标记结尾",
             placeholder: "" },
           { type: "text",   key: "checkurl", label: "Check URL",
             description: "server_check_url 参数",
@@ -208,24 +205,24 @@ $parser.hashSchema = function () {
       },
       {
         type: "group",
-        title: "🎯 重命名",
+        title: "重命名",
         items: [
           { type: "text", key: "rename",  label: "节点重命名（Rename）",
-            description: "格式：旧名@新名 / 前缀@ / @后缀；多组用 + 连接；删除字段用 ☠️ 结尾",
+            description: "格式：旧名@新名 / 前缀@ / @后缀；多组用 + 连接；删除字段使用删除标记结尾",
             placeholder: "香港@HK+@[1X]" },
           { type: "text", key: "rrname",  label: "节点重命名（emoji 保持在前）",
             description: "在 emoji 之后再次重命名", placeholder: "" },
           { type: "select", key: "ptn", label: "字母样式（ptn）",
-            description: "将节点名英文替换成花式样式 🅰/🄰/𝐀/𝗮/𝔸/𝕒/ᵃ/ᴬ ",
+            description: "将节点名英文替换成指定字母样式",
             options: _ptnOptions() },
           { type: "select", key: "npt", label: "数字样式（npt）",
-            description: "将节点名数字替换成花式样式 ①/❶/⓵/𝟙/¹/₁/𝟏/𝟷",
+            description: "将节点名数字替换成指定数字样式",
             options: _nptOptions() }
         ]
       },
       {
         type: "group",
-        title: "🤖 其他参数",
+        title: "其他参数",
         items: [
           { type: "select", key: "ntf",  label: "解析通知",
             options: [
@@ -257,7 +254,7 @@ $parser.hashSchema = function () {
     sections: [
       {
         type: "group",
-        title: "🔀 Filter 「分流」",
+        title: "Filter（分流）",
         description: "仅对 rewrite_remote / filter_remote 生效",
         items: [
           { type: "tags", key: "in",  label: "保留分流规则「in」",
@@ -281,21 +278,21 @@ $parser.hashSchema = function () {
       },
       {
         type : "group",
-        title: "🔗 代理链相关设置「Relay」",
+        title: "代理链相关设置（Relay）",
         items : [
           { type: "text", key: "via",    label: "via-interface「规则订阅」",
              description: "0 : via-interface=%TUN%, 设置代理链时，规则分流需使用此参数，请在策略偏好将策略组指定为 落地策略组/节点\n" ,
              placeholder: "填写 0 即可" 
           },
           { type: "text",   key: "relay", label: "代理链 Relay「节点订阅」",
-            description: "将（落地）节点的订阅转换为 ip/host 规则，指向 中转策略组/节点。\n ⚠️ 设置 代理链条Relay 时，请确保关闭改订阅首页的「策略偏好」设置 \n\n ⚠️ 以上两项不应该在同一条引用中同时设置 ⚠️" ,
-            placeholder: "⚠️ 此处请填写你的 中转策略组/节点名" },
+            description: "将（落地）节点的订阅转换为 ip/host 规则，指向 中转策略组/节点。\n设置代理链条 Relay 时，请确保关闭该订阅首页的「策略偏好」设置。\n\n以上两项不应该在同一条引用中同时设置。" ,
+            placeholder: "请填写你的中转策略组/节点名" },
            
         ]
       },
       {
         type: "group",
-        title: "🤖 其他参数",
+        title: "其他参数",
         items: [
           { type: "select", key: "ntf",  label: "解析通知",
             options: [
@@ -337,7 +334,7 @@ $parser.hashSchema = function () {
     sections: [
       {
         type: "group",
-        title: "🫆 Rewrite 「重写」",
+        title: "Rewrite（重写）",
         description: "仅对 rewrite_remote / filter_remote 生效",
         items: [
           { type: "tags", key: "in",  label: "保留分流/重写「in」",
@@ -362,7 +359,7 @@ $parser.hashSchema = function () {
       },
       {
         type: "group",
-        title: "🤖 其他参数",
+        title: "其他参数",
         items: [
           { type: "select", key: "ntf",  label: "解析通知",
             options: [
@@ -529,7 +526,7 @@ const result = {
       // or error: "..."
   };
 
-//$notify("retry2","🚦 UA-retry-After-outside",currentUA)
+//$notify("retry2"," UA-retry-After-outside",currentUA)
 //
 
 
@@ -580,7 +577,7 @@ const sub_link = { "open-url": link1, "media-url": "https://shrtm.nu/ebAr" } // 
 const update_link = {"open-url" : "https://apps.apple.com/us/app/quantumult-x/id1443988620", "media-url": qxpng}
 const plink0 = {"open-url" : link0, "media-url": qxpng} // 跳转订阅链接
 
-if(version == 0) { $notify("⚠️ 请更新 Quantumult X 至最新商店版本\n","🚦 当前版本可能无法正常使用部分功能","\n👉 点击跳转商店链接更新",update_link) }
+if(version == 0) { $notify("注意: 请更新 Quantumult X 至最新商店版本\n"," 当前版本可能无法正常使用部分功能","\n 点击跳转商店链接更新",update_link) }
 
 
 
@@ -706,8 +703,8 @@ if (Pflow!=0) {
   Finfo = BJson
 }
 
-//STATUS=🚀↑:0.62GB,↓:15.1GB,TOT:200GB💡Expires:2026-08-02
-//status=🚀↑:0.83gb,↓:17.73gb,tot:200gb💡expires:2026-08-02
+//STATUS=↑:0.62GB,↓:15.1GB,TOT:200GBExpires:2026-08-02
+//status=↑:0.83gb,↓:17.73gb,tot:200gbexpires:2026-08-02
 //2026-05-06 for shadowrocket sub with flow-info-fake server
 function Rocket_flow(RInfo) {
   var Rinfo=RInfo.replace(/ /g, "").toLowerCase()
@@ -753,12 +750,12 @@ patn[7] = ["𝟎","𝟏","𝟐","𝟑","𝟒","𝟓","𝟔","𝟳","𝟖","𝟗"
 patn[8] = ["𝟶","𝟷","𝟸","𝟹","𝟺","𝟻","𝟼","𝟽","𝟾","𝟿"]
 
 
-// 将数字替换成 emoji 数字，处理10的特殊版本（需要"🔟"），2026-04-22
+// 将数字替换成 emoji 数字，处理10的特殊版本（需要"10"），2026-04-22
 function numToEmoji10(n) {
     if (n == 10) {
-      return emojino[10]+" ➠ ";
+      return emojino[10]+" -> ";
     } else {
-      return String(n).split('').map(d => emojino[d] || d).join('')+" ➠ ";
+      return String(n).split('').map(d => emojino[d] || d).join('')+" -> ";
     }
 };
 
@@ -778,7 +775,7 @@ var flag = 1
 
 // retry with new UA, default use shadowrocket
 if (UARetry && !inRetry && version>920) {
-  $notify("⚠️ 将尝试使用其他 UA, 重新获取订阅内容","⚠️ 如仍旧无有效内容，请自行与节点提供商联系","⚠️ 本次尝试使用 User-Agent 为 ⬇️\n\n"+UA_Retry)
+  $notify("注意: 将尝试使用其他 UA, 重新获取订阅内容","注意: 如仍旧无有效内容，请自行与节点提供商联系","注意: 本次尝试使用 User-Agent 为 如下\n\n"+UA_Retry)
   $done({retry: {user_agent: "Shadowrocket/3218 CFNetwork/3860.600.12 Darwin/25.5.0 iPhone18,1"}})
 } else {
   if (typeof($resource)!=="undefined" && PProfile == 0) {
@@ -789,11 +786,11 @@ if (UARetry && !inRetry && version>920) {
     Profile_Handle()
   } catch (err) {
     if(Perror == 0) {
-      $notify("❌ 解析出现错误", "⚠️ 请点击通知，发送订阅链接进行反馈", err, bug_link);
+      $notify("错误: 解析出现错误", "注意: 请点击通知，发送订阅链接进行反馈", err, bug_link);
     }
     }
   openlink = {"open-url": ADDres}
-  $notify("⚠️请忽略报错提示, 点击此通知跳转", "添加配置中的有效远程资源👇 ["+ PProfile+"]", ADDres,openlink)
+  $notify("注意:请忽略报错提示, 点击此通知跳转", "添加配置中的有效远程资源如下 ["+ PProfile+"]", ADDres,openlink)
   total = ProfileInfo[typeQ]
   $done({content:total})
 }
@@ -812,17 +809,17 @@ function Parser() {
       
     } catch (err) {
       if(Perror == 0) {
-      $notify("❌ 解析出现错误", "⚠️ 请点击通知，发送订阅链接进行反馈", err, bug_link);
+      $notify("错误: 解析出现错误", "注意: 请点击通知，发送订阅链接进行反馈", err, bug_link);
     }
     }
   } else if (type0 == "wrong-field"){
     if (version >= 670 && typec!="") { //尝试跳转到正确类型
-      RLink0[Field[typec]].push($resource.link+", opt-parser=true, tag=下次添加资源🉑️长点❤️8⃣️") //  跳转URI-Scheme
+      RLink0[Field[typec]].push($resource.link+", opt-parser=true, tag=下次添加资源可长按") //  跳转URI-Scheme
       var flink = ADDRes.replace(/url-encoded-json/,encodeURIComponent(JSON.stringify(RLink0)))
       const bug_linkx = { "open-url": flink, "media-url": "https://shrtm.nu/obcB" } // bug linkx
-    $notify( "⚠️ 请点击通知跳转尝试添加到正确类型中","❌ 检测类型["+typec+"]"+"与填入类型"+"["+typeQ+"]冲突", "如果跳转添加仍旧失败，请发送链接反馈解析器bot\n"+$resource.link, bug_linkx)
+    $notify( "注意: 请点击通知跳转尝试添加到正确类型中","错误: 检测类型["+typec+"]"+"与填入类型"+"["+typeQ+"]冲突", "如果跳转添加仍旧失败，请发送链接反馈解析器bot\n"+$resource.link, bug_linkx)
     } else {//旧版本
-    $notify("❌ 检测类型「"+typec+" 」"+"与目标类型"+" 「"+typeQ+" 」冲突", "⚠️ 请自行检查链接内容，或点击通知发送链接进行反馈", $resource.link, bug_link)
+    $notify("错误: 检测类型「"+typec+" 」"+"与目标类型"+" 「"+typeQ+" 」冲突", "注意: 请自行检查链接内容，或点击通知发送链接进行反馈", $resource.link, bug_link)
     }
     total=""
   } else {
@@ -841,11 +838,11 @@ function Parser() {
 //     Profile_Handle()
 //   } catch (err) {
 //     if(Perror == 0) {
-//       $notify("❌ 解析出现错误", "⚠️ 请点击通知，发送订阅链接进行反馈", err, bug_link);
+//       $notify("错误: 解析出现错误", "注意: 请点击通知，发送订阅链接进行反馈", err, bug_link);
 //     }
 //     }
 //   openlink = {"open-url": ADDres}
-//   $notify("⚠️请忽略报错提示, 点击此通知跳转", "添加配置中的有效远程资源👇 ["+ PProfile+"]", ADDres,openlink)
+//   $notify("注意:请忽略报错提示, 点击此通知跳转", "添加配置中的有效远程资源如下 ["+ PProfile+"]", ADDres,openlink)
 //   total = ProfileInfo[typeQ]
 //   $done({content:total})
 // }
@@ -860,14 +857,14 @@ function ParseUnknown(cnt){
   try {
     cnt = JSON.parse(cnt)
     if(cnt) {
-      $notify("⚠️ 链接返回内容并非有效订阅"+ "⟦" + subtag + "⟧","⁉️ 请自行检查原始链接，返回内容 👇️👇️",JSON.stringify(cnt), bug_link)
+      $notify("注意: 链接返回内容并非有效订阅"+ "[" + subtag + "]","提示: 请自行检查原始链接，返回内容 如下",JSON.stringify(cnt), bug_link)
     }
     
   } catch(err) {
     if (!/error|block|invalid|support/.test(cnt.toLowerCase())) {
-    $notify("😭 未能识别订阅 " + "⟦" + subtag + "⟧ 的内容",  "⚠️ 将尝试直接导入Quantumult X \n 如认为是 BUG, 请点通知跳转并 [发送链接] 反馈", "订阅返回内容: 👇 \n"+cnt, bug_link);
+    $notify(" 未能识别订阅 " + "[" + subtag + "] 的内容",  "注意: 将尝试直接导入Quantumult X \n 如认为是 BUG, 请点通知跳转并 [发送链接] 反馈", "订阅返回内容: 如下 \n"+cnt, bug_link);
   } else {
-    $notify("💢 ⟦" + subtag + "⟧ 返回内容无效",  "😠 请自行检查订阅，不要跑来反馈", "订阅返回内容: 👇 \n"+cnt, plink0);
+    $notify("[" + subtag + "] 返回内容无效",  "请自行检查订阅，不要反馈无效内容", "订阅返回内容: \n"+cnt, plink0);
   }
 }
 }
@@ -917,14 +914,14 @@ function ResourceParse() {
     total = total.length<100? total.filter( (ele,pos)=>total.indexOf(ele) == pos) : total
     total = total.join("\n")
   } else if (content0.trim() == "") {
-    $notify("‼️ 当前引用" + "⟦" + subtag + "⟧" + " 返回內容为空", "1️⃣ 请确认 APP 已经更新至最新版本 1.5.6", "2️⃣ 如确认链接有效，请打开资源解析器的「User-Agent 替换」选项重新获取链接内容 ", nan_link);
+    $notify("注意: 当前引用" + "[" + subtag + "]" + " 返回內容为空", "1 请确认 APP 已经更新至最新版本 1.5.6", "2 如确认链接有效，请打开资源解析器的「User-Agent 替换」选项重新获取链接内容 ", nan_link);
     flag = 0;
   } else if (type0 == "sub-http") {
     let url = VCheck(String(Base64.decode(content0.split("sub://")[1].split("#")[0])+", opt-parser=true, tag="+(new Date()).getTime()))
      RLink = RLink.replace("sremoteposition",url).replace("fremoteposition","").replace("rremoteposition","")
     let ADDres0 = ADDres.replace("url-encoded-json",encodeURIComponent(RLink))
     openlink = {"open-url": ADDres0}
-    $notify("⚠️ 该链接为节点订阅, 请点击此通知跳转添加", url, ADDres0,openlink)
+    $notify("注意: 该链接为节点订阅, 请点击此通知跳转添加", url, ADDres0,openlink)
     flag = -1
     total = ""
   } else if (type0 == "unknown") {
@@ -934,7 +931,7 @@ function ResourceParse() {
     PProfile = "111" //默认添加所有部分
     Profile_Handle()
     openlink = {"open-url": ADDres}
-    $notify("⚠️ 该链接为完整配置文件, 请点击此通知跳转", "添加配置中的有效远程资源👇 ["+ PProfile+"]", ADDres, openlink)
+    $notify("注意: 该链接为完整配置文件, 请点击此通知跳转", "添加配置中的有效远程资源如下 ["+ PProfile+"]", ADDres, openlink)
     flag = -1;
     total = ""
   } else if (type0 == "JS-0") {
@@ -985,13 +982,13 @@ function ResourceParse() {
       //$notify("before","haha",total)
       total = TagCheck_QX(total).join("\n") //节点名检查
       if (PUOT==1) { total = total.split("\n").map(UOT).join("\n")}
-      if (Pcnt == 1 && total!=undefined) {$notify("⟦" + subtag + "⟧"+"解析后最终返回内容" , "节点数量: " +total.split("\n").length, total)}
+      if (Pcnt == 1 && total!=undefined) {$notify("[" + subtag + "]"+"解析后最终返回内容" , "节点数量: " +total.split("\n").length, total)}
       total = PRelay==""? Base64.encode(total) : ServerRelay(total.split("\n"),PRelay) //强制节点类型 base64 加密后再导入 Quantumult X, 如果是relay，则转换成分流类型
       if (PNS !=0) {
         if (version >913) {
-          $notify("⚠️ 存在 QuantumultX 不支持类型 ➟ ⟦"+subtag+"⟧", "⚠️ 已忽略相关节点，共计 ➟ "+PNS+" 条", "⚠️ 此版本暂不支持 Hysteria2/Tuic 等类型, 以及 http-upgrade/xhttp/grpc/mkcp/h2” 等类型 vless\n\n"+NSList.join("\n"))
+          $notify("注意: 存在 QuantumultX 不支持类型 -> ["+subtag+"]", "注意: 已忽略相关节点，共计 -> "+PNS+" 条", "注意: 此版本暂不支持 Hysteria2/Tuic 等类型, 以及 http-upgrade/xhttp/grpc/mkcp/h2” 等类型 vless\n\n"+NSList.join("\n"))
         } else {
-          $notify("⚠️ 存在 QuantumultX 不支持类型 ➟ ⟦"+subtag+"⟧", "⚠️ 已忽略相关节点，共计 ➟ "+PNS+" 条", "⚠️ 此版本暂不支持 Hysteria2/Tuic/Anytls 等类型, 以及 http-upgrade/xhttp/grpc/mkcp/h2” 等类型 vless\n\n"+NSList.join("\n"))
+          $notify("注意: 存在 QuantumultX 不支持类型 -> ["+subtag+"]", "注意: 已忽略相关节点，共计 -> "+PNS+" 条", "注意: 此版本暂不支持 Hysteria2/Tuic/Anytls 等类型, 以及 http-upgrade/xhttp/grpc/mkcp/h2” 等类型 vless\n\n"+NSList.join("\n"))
         }
       }
       if(Pflow==1) {
@@ -1003,13 +1000,13 @@ function ResourceParse() {
       if(Perror == 0) {
       if (PNS !=0) { // 全部为不支持类型节点
         if (version >913) {
-          $notify("⚠️ QuantumultX 不支持该订阅内的任何节点➟ ⟦"+subtag+"⟧", "⚠️ 已忽略共计 ➟ "+PNS+" 条不支持节点，剩余 0️⃣ 条", "⚠️ 此版本暂不支持 Hysteria2/Tuic 等类型, 以及 http-upgrade/xhttp/grpc/mkcp/h2” 等类型 vless\n\n"+NSList.join("\n"))
+          $notify("注意: QuantumultX 不支持该订阅内的任何节点-> ["+subtag+"]", "注意: 已忽略共计 -> "+PNS+" 条不支持节点，剩余 0 条", "注意: 此版本暂不支持 Hysteria2/Tuic 等类型, 以及 http-upgrade/xhttp/grpc/mkcp/h2” 等类型 vless\n\n"+NSList.join("\n"))
         } else {
-          $notify("⚠️ QuantumultX 不支持该订阅内的任何节点➟ ⟦"+subtag+"⟧", "⚠️ 已忽略共计 ➟ "+PNS+" 条不支持节点，剩余 0️⃣ 条", "⚠️ 此版本暂不支持 Hysteria2/Tuic/Anytls 等类型, 以及 http-upgrade/xhttp/grpc/mkcp/h2” 等类型 vless\n\n"+NSList.join("\n"))
+          $notify("注意: QuantumultX 不支持该订阅内的任何节点-> ["+subtag+"]", "注意: 已忽略共计 -> "+PNS+" 条不支持节点，剩余 0 条", "注意: 此版本暂不支持 Hysteria2/Tuic/Anytls 等类型, 以及 http-upgrade/xhttp/grpc/mkcp/h2” 等类型 vless\n\n"+NSList.join("\n"))
         }
         
       } else { // 其它原因
-        $notify("❓❓ 该订阅 ➟ "+ "⟦" + subtag + "⟧ 解析后无有效节点", "⚠️⚠️ 解析后 Quantumult-X 支持节点数为 0️⃣ 条", "🚥🚥 请自行检查相关参数、确认节点类型, 或者点击通知跳转并发送链接反馈", bug_link)
+        $notify("该订阅 -> "+ "[" + subtag + "] 解析后无有效节点", "注意: 解析后 Quantumult-X 支持节点数为 0 条", "请自行检查相关参数、确认节点类型, 或者点击通知跳转并发送链接反馈", bug_link)
       } 
     }
       total = errornode
@@ -1041,14 +1038,14 @@ function SubFlow() {
       var day = epr.getDate() < 10 ? "0" + (epr.getDate()) : epr.getDate();
       epr = "过期时间: " + year + "-" + mth + "-" + day
     } else {
-      epr = ""; //"过期时间: ✈️ 未提供該信息" //没过期时间的显示订阅链接
+      epr = ""; //"过期时间: 未提供该信息" //没过期时间的显示订阅链接
     }
     var message = total + "\n" + usd + ", " + left;
     ntf_flow = 1;
-    $notify("流量信息: ⟦" + subtag + "⟧", epr, message, subinfo_link)
+    $notify("流量信息: [" + subtag + "]", epr, message, subinfo_link)
   }
 //  } else if (Pinfo ==1){
-//    $notify("流量信息: ⟦" + subtag + "⟧", "", "⚠️ 该订阅链接未返回任何流量信息", subinfo_link)
+//    $notify("流量信息: [" + subtag + "]", "", "注意: 该订阅链接未返回任何流量信息", subinfo_link)
 //  }
 }
 
@@ -1064,18 +1061,18 @@ function flowcheck(cnt) {
             exptime = nm
         }
     }
-  flow = flow? flow:"⚠️ 该订阅未返回任何流量信息"
-  exptime = exptime? exptime:"⚠️ 该订阅未返回套餐时间信息"
-    if (flow != "") { $notify("流量信息: ⟦" + subtag + "⟧", flow, exptime, subinfo_link1) }
+  flow = flow? flow:"该订阅未返回任何流量信息"
+  exptime = exptime? exptime:"该订阅未返回套餐时间信息"
+    if (flow != "") { $notify("流量信息: [" + subtag + "]", flow, exptime, subinfo_link1) }
 }
 
 // regex 后的检查
 function RegCheck(total, typen, paraname,regpara) {
   if(total.length == 0){ 
-    $notify("‼️ " + typen + "  ➟ " + "⟦" + subtag + "⟧", "⛔️ 筛选正则: " + paraname + "=" + regpara, "⚠️ 筛选后剩余项为 0️⃣ , 请检查正则参数及原始链接", nan_link)
+    $notify("注意: " + typen + " -> " + "[" + subtag + "]", "筛选正则: " + paraname + "=" + regpara, "注意: 筛选后剩余项为 0, 请检查正则参数及原始链接", nan_link)
   }else if((typen != "节点订阅" && Pntf0 !=0) || (typen == "节点订阅" && Pntf0 ==1)){
     var nolist = total.length <= 10 ? emojino[total.length] : total.length
-    $notify("🤖 " + typen + "  ➟ " + "⟦" + subtag + "⟧", "⛔️ 筛选正则: " + paraname + "=" + regpara, "⚠️ 筛选后剩余以下" + nolist + "个匹配项 \n ⨷ " + total.join("\n ⨷ "), sub_link)
+    $notify(typen + " -> " + "[" + subtag + "]", "筛选正则: " + paraname + "=" + regpara, "注意: 筛选后剩余以下" + nolist + "个匹配项 \n - " + total.join("\n - "), sub_link)
   }
 }
 //判断订阅类型
@@ -1101,7 +1098,7 @@ function Type_Check(subs) {
     const ProfileCheck = (item) => subs.indexOf(item) != -1; //是否为quanx配置文件
     var subsn = subs.split("\n")
     if ( (subs.indexOf(html) != -1 || subs.indexOf("doctype html") != -1) && link0.indexOf("github.com" == -1)) {
-      $notify("‼️ 该链接返回为无效网页内容"+ " ➟ " + "⟦" + subtag + "⟧", "⁉️ 点通知跳转以确认链接是否失效\n"+link0, "返回内容如下⬇️：\n"+subs, nan_link);
+      $notify("注意: 该链接返回为无效网页内容"+ " -> " + "[" + subtag + "]", "提示: 点通知跳转以确认链接是否失效\n"+link0, "返回内容如下：\n"+subs, nan_link);
       type = "web";
     } else if (typeU == "nodes" && typeQ=="server") { //指定为节点类型
       type = (typeQ == "unsupported" || typeQ =="server")? "Subs":"wrong-field"
@@ -1171,7 +1168,7 @@ function Type_Check(subs) {
       type = "profile"  //默认配置类型
     }else if (/\.js/.test(link0)) { // xjb添加js脚本的行为
       Perror = 1 ; // 无需反馈
-      $notify("⚠️ 你导入的链接内容为 JS 脚本","🚥 脚本内未有重写规则，无法解析使用", " 请⚠️不要⚠️跑来解析器🤖️反馈 \n"+link0)
+      $notify("注意: 你导入的链接内容为 JS 脚本","脚本内未有重写规则，无法解析使用", "请不要将此类内容反馈给解析器 bot\n"+link0)
       type = "JS-0"
     } else if (typeQ =="server" && subs.length>100) { // 一些未知的b64 encode server case
       typec="server-b64-unknown"
@@ -1242,14 +1239,14 @@ function TagCheck_QX(content) {
     }
     if (nulllist.length >= 1) {
         no = nulllist.length <= 10 ? emojino[nulllist.length] : nulllist.length;
-        $notify("⚠️ 引用" + "⟦" + subtag + "⟧" + " 内有" + no + "个空节点名 ", "✅ 已将节点“类型+IP”设为节点名", " ⨁ " + nulllist.join("\n ⨁ "), nan_link)
+        $notify("注意: 引用" + "[" + subtag + "]" + " 内有" + no + "个空节点名 ", "完成: 已将节点“类型+IP”设为节点名", " - " + nulllist.join("\n - "), nan_link)
     }
     if (duplist.length >= 1) {
         no = duplist.length <= 10 ? emojino[duplist.length] : duplist.length;
       if (Pdel!=1 && Pntf0 != 0){
-        $notify("⚠️ 引用" + "⟦" + subtag + "⟧" + " 内有" + no + "个名字重复的节点 ", "✅ 已添加数字区分, 删除请添加参数 del=1:", " ⨁ " + duplist.join("\n ⨁ "), nan_link)
+        $notify("注意: 引用" + "[" + subtag + "]" + " 内有" + no + "个名字重复的节点 ", "完成: 已添加数字区分, 删除请添加参数 del=1:", " - " + duplist.join("\n - "), nan_link)
       } else if (Pdel ==1 && Pntf0 != 0) {
-        $notify("⚠️ 引用" + "⟦" + subtag + "⟧" + " 内有" + no + "个名字重复的节点 ", "❌️ 已全部删除，如需保留请去除参数 del=1:", " ⨁ " + duplist.join("\n ⨁ "), nan_link)
+        $notify("注意: 引用" + "[" + subtag + "]" + " 内有" + no + "个名字重复的节点 ", "错误: 已全部删除，如需保留请去除参数 del=1:", " - " + duplist.join("\n - "), nan_link)
       }
     }
     return Nlist
@@ -1452,9 +1449,9 @@ function ToRaw(cnt) {
   cnt = cnt.split("\n").map(rawtest).filter(Boolean).join("\n")
   var rawlink = link0.replace("github.com","raw.githubusercontent.com").replace("/blob","")
   if (cnt) {
-    $notify( "⚠️⚠️ 将尝试解析该资源" + "⟦" + subtag + "⟧" , "🚥 请正确使用GitHub的 raw 链接" , "❌ 你的链接："+link0+"\n✅ 正确链接："+rawlink, {"open-url":rawlink})
+    $notify( "注意: 将尝试解析该资源" + "[" + subtag + "]" , " 请正确使用GitHub的 raw 链接" , "错误: 你的链接："+link0+"\n完成: 正确链接："+rawlink, {"open-url":rawlink})
   } else if(content0.indexOf("gridcell")!=-1) {
-    $notify( "⚠️⚠️ 解析该资源" + " ⟦" + subtag + "⟧ 失败" , "🚥 你的链接似乎是目录，而不是文件" , "❌ 你的链接："+link0, {"open-url":link0})
+    $notify( "注意: 解析该资源" + " [" + subtag + "] 失败" , " 你的链接似乎是目录，而不是文件" , "错误: 你的链接："+link0, {"open-url":link0})
   }
   return cnt
 }
@@ -1464,9 +1461,9 @@ function ToLink(link) {
   if (cnt) {
     
     typ=$resource.type
-    RLink0[Field[typ]].push(cnt+", opt-parser=true, tag=🉑️长点❤️8⃣️") //  跳转URI-Scheme
+    RLink0[Field[typ]].push(cnt+", opt-parser=true, tag=可长按") //  跳转URI-Scheme
     flink = ADDRes.replace(/url-encoded-json/,encodeURIComponent(JSON.stringify(RLink0)))
-    $notify( "⚠️ 请点击通知跳转尝试添加正确链接" , "🚥 请正确使用原始链接" , "❌ 你的链接："+link0+"\n✅ 正确链接："+cnt, {"open-url":flink})
+    $notify( "注意: 请点击通知跳转尝试添加正确链接" , " 请正确使用原始链接" , "错误: 你的链接："+link0+"\n完成: 正确链接："+cnt, {"open-url":flink})
   } 
   return "wrong-link"
 }
@@ -1692,7 +1689,7 @@ function SCP2QX(subs) {
         nrw.push(subs[i])
       }
     } catch (err) {
-      $notify("❌️解析此条时出现错误，已忽略",subs[i],err)
+      $notify("错误:解析此条时出现错误，已忽略",subs[i],err)
     }
   }
   return nrw
@@ -1742,20 +1739,20 @@ function Rewrite_Filter(subs, Pin, Pout,Preg,Pregout) {
         no1write = Nlist.length <= 10 ? emojino[Nlist.length] : Nlist.length
         if (Pin0 && no1write != " 0️⃣ ") { //有 in 参数就通知保留项目
           if (Pout!=0) {
-            $notify("🤖 " + "重写引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 筛选参数: " + pfi + pfo, "☠️ 重写 rewrite 中保留以下" + no1write + "个匹配项:" + "\n ⨷ " + Nlist.join("\n ⨷ "), rwrite_link)
+            $notify("重写引用 -> " + "[" + subtag + "]", "筛选参数: " + pfi + pfo, "重写 rewrite 中保留以下" + no1write + "个匹配项:" + "\n - " + Nlist.join("\n - "), rwrite_link)
           }
         } else if (dwrite.length > 0) {
           if (Pout0!=0) {
-            $notify("🤖 " + "重写引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 筛选参数: " + pfi + pfo, "☠️ 重写 rewrite 中已禁用以下" + nowrite + "个匹配项:" + "\n ⨷ " + dwrite.join("\n ⨷ "), rwrite_link)
+            $notify("重写引用 -> " + "[" + subtag + "]", "筛选参数: " + pfi + pfo, "重写 rewrite 中已禁用以下" + nowrite + "个匹配项:" + "\n - " + dwrite.join("\n - "), rwrite_link)
           }
         }
     }
 
     if (Nlist.length == 0 ) { 
       if ((Pin0 || Pout0 || Phin0 || Phout0 || Pregout || Preg)) {
-        $notify("🤖 " + "重写引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 筛选参数: " + pfi + pfo, "⚠️ 筛选后剩余rewrite规则数为 0️⃣ 条, 请检查参数及原始链接", nan_link) 
+        $notify("重写引用 -> " + "[" + subtag + "]", "筛选参数: " + pfi + pfo, "注意: 筛选后剩余 rewrite 规则数为 0 条, 请检查参数及原始链接", nan_link) 
       } else {
-        $notify("🤖 " + "重写引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 解析后 rewrite 规则数为 0️⃣ 条 " , "⚠️ 请检查参数及原始链接内容", nan_link) 
+        $notify("重写引用 -> " + "[" + subtag + "]", "解析后 rewrite 规则数为 0 条" , "注意: 请检查参数及原始链接内容", nan_link) 
       
       }
     }
@@ -1778,17 +1775,17 @@ function HostNamecheck(content, parain, paraout) {
         dd = hname[i]
         const excludehn = (item) => dd.indexOf(item) != -1;
         if (paraout && paraout != "") { //存在 out 参数时
-            if (!paraout.some(excludehn)) { //out 未命中🎯️
+            if (!paraout.some(excludehn)) { //out 未命中
                 if (parain && parain != "") {
-                    if (parain.some(excludehn)) { //Pin 命中🎯️
+                    if (parain.some(excludehn)) { //Pin 命中
                         nname.push(hname[i])
                     } else {
                         dname.push(hname[i])
-                    } //Pin 未命中🎯️的记录
+                    } //Pin 未命中的记录
                 } else { nname.push(hname[i]) } //无in 参数    
             } else { dname.push(hname[i]) } //out 参数命中
         } else if (parain && parain != "") { //不存在 out，但有 in 参数时
-            if (parain.some(excludehn)) { //Pin 命中🎯️
+            if (parain.some(excludehn)) { //Pin 命中
                 nname.push(hname[i])
             } else { dname.push(hname[i]) }
         } else {
@@ -1800,14 +1797,14 @@ function HostNamecheck(content, parain, paraout) {
             var noname = dname.length <= 10 ? emojino[dname.length] : dname.length
             var no1name = nname.length <= 10 ? emojino[nname.length] : nname.length
             if (parain && no1name != " 0️⃣ ") {
-                $notify("🤖 " + "重写引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 筛选参数: " + pfihn + pfohn, "☠️ 主机名 hostname 中已保留以下" + no1name + "个匹配项:" + "\n ⨷ " + nname.join(","), rwhost_link)
+                $notify("重写引用 -> " + "[" + subtag + "]", "筛选参数: " + pfihn + pfohn, "主机名 hostname 中已保留以下" + no1name + "个匹配项:" + "\n - " + nname.join(","), rwhost_link)
             } else if (dname.length > 0) {
-                $notify("🤖 " + "重写引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 筛选参数: " + pfihn + pfohn, "☠️ 主机名 hostname 中已删除以下" + noname + "个匹配项:" + "\n ⨷ " + dname.join(","), rwhost_link)
+                $notify("重写引用 -> " + "[" + subtag + "]", "筛选参数: " + pfihn + pfohn, "主机名 hostname 中已删除以下" + noname + "个匹配项:" + "\n - " + dname.join(","), rwhost_link)
             }
         }
     }
     if (nname.length == 0) {
-        $notify("🤖 " + "重写引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 筛选参数: " + pfihn + pfohn, "⚠️ 主机名 hostname 中剩余 0️⃣ 项, 请检查参数及原始链接", nan_link)
+        $notify("重写引用 -> " + "[" + subtag + "]", "筛选参数: " + pfihn + pfohn, "注意: 主机名 hostname 中剩余 0 项, 请检查参数及原始链接", nan_link)
     }
     if(Preg){ nname = nname.map(Regex).filter(Boolean)
       RegCheck(nname, "主机名hostname","regex", Preg) }
@@ -1868,20 +1865,20 @@ function Rule_Handle(subs, Pout, Pin) {
         }//for cnt
         var no = dlist.length <= 10 ? emojino[dlist.length] : dlist.length
         if (dlist.length > 0) {
-            if (Pntf0 != 0) { $notify("🤖 " + "分流引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 禁用: " + Tout, "☠️ 已禁用以下" + no + "条匹配规则:" + "\n ⨷ " + dlist.join("\n ⨷ "), rule_link) }
-        } else { $notify("🤖 " + "分流引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 禁用: " + Tout, "⚠️ 未发现任何匹配项, 请检查参数或原始链接", nan_link) }
+            if (Pntf0 != 0) { $notify("分流引用 -> " + "[" + subtag + "]", "禁用: " + Tout, "已禁用以下" + no + "条匹配规则:" + "\n - " + dlist.join("\n - "), rule_link) }
+        } else { $notify("分流引用 -> " + "[" + subtag + "]", "禁用: " + Tout, "注意: 未发现任何匹配项, 请检查参数或原始链接", nan_link) }
         if (Tin != "" && Tin != null) {  //有 in 跟 out 参数时
             if (nlist.length > 0) {
                 var noin0 = nlist.length <= 10 ? emojino[nlist.length] : nlist.length
                 if (Pntf0 != 0) {
-                    $notify("🤖 " + "分流引用  ➟ " + "⟦" + subtag + "⟧", "✅ 保留:" + Tin, "🎯 已保留以下 " + noin0 + "条匹配规则:" + "\n ⨁ " + nlist.join("\n ⨁ "), rule_link)
+                    $notify("分流引用 -> " + "[" + subtag + "]", "完成: 保留:" + Tin, "已保留以下 " + noin0 + "条匹配规则:" + "\n - " + nlist.join("\n - "), rule_link)
                 }
             } else {
-                $notify("🤖 " + "分流引用  ➟ " + "⟦" + subtag + "⟧", "✅ 保留:" + Tin + ",⛔️ 禁用: " + Tout, "⚠️ 筛选后剩余规则数为 0️⃣ 条, 请检查参数及原始链接", nan_link)
+                $notify("分流引用 -> " + "[" + subtag + "]", "完成: 保留:" + Tin + ", 禁用: " + Tout, "注意: 筛选后剩余规则数为 0 条, 请检查参数及原始链接", nan_link)
             }
         } else {// if Tin (No Tin)
             if (nlist.length == 0) {
-                $notify("🤖 " + "分流引用  ➟ " + "⟦" + subtag + "⟧", "⛔️ 禁用: " + Tout, "⚠️ 筛选后剩余规则数为 0️⃣ 条, 请检查参数及原始链接", nan_link)
+                $notify("分流引用 -> " + "[" + subtag + "]", "禁用: " + Tout, "注意: 筛选后剩余规则数为 0 条, 请检查参数及原始链接", nan_link)
             }
         }
       nlist =Phide ==1? nlist : [...dlist,...nlist]
@@ -1903,9 +1900,9 @@ function Rule_Handle(subs, Pout, Pin) {
         if (nlist.length > 0) {
             var noin = nlist.length <= 10 ? emojino[nlist.length] : nlist.length
             if (Pntf0 != 0) {
-                $notify("🤖 " + "分流引用  ➟ " + "⟦" + subtag + "⟧", "✅ 保留:" + Tin, "🎯 已保留以下 " + noin + "条匹配规则:" + "\n ⨁ " + nlist.join("\n ⨁ "), rule_link)
+                $notify("分流引用 -> " + "[" + subtag + "]", "完成: 保留:" + Tin, "已保留以下 " + noin + "条匹配规则:" + "\n - " + nlist.join("\n - "), rule_link)
             }
-        } else { $notify("🤖 " + "分流引用  ➟ " + "⟦" + subtag + "⟧", "✅ 保留:" + Tin, "⚠️ 筛选后剩余规则数为 0️⃣ 条, 请检查参数及原始链接", nan_link) }
+        } else { $notify("分流引用 -> " + "[" + subtag + "]", "完成: 保留:" + Tin, "注意: 筛选后剩余规则数为 0 条, 请检查参数及原始链接", nan_link) }
       nlist =Phide ==1? nlist : [...dlist,...nlist]
       //return nlist;
     } else {  //if Tin
@@ -1950,7 +1947,7 @@ function Rule_Policy(content) { //增加、替换 policy
             ply0 = Ppolicy != "Shawn" ? Ppolicy : cnt[2]
             nn = cnt[0] + ", " + cnt[1] + ", " + ply0
         } else if (!RuleK.some(RuleCheck) && content) {
-            //$notify("未能解析" + "⟦" + subtag + "⟧" + "其中部分规则:", content, nan_link);
+            //$notify("未能解析" + "[" + subtag + "]" + "其中部分规则:", content, nan_link);
             return ""
         } else { return "" }
         if (cnt[0].indexOf("URL-REGEX") != -1 || cnt[0].indexOf("PROCESS") != -1) {
@@ -2166,13 +2163,13 @@ function Subs2QX(subs, Pudp, Ptfo, Pcert0, PTls13) {
                     }
                 } else if (type == "vless" && version<821) {
                   Perror = 1 ; // 无需反馈
-                  $notify("⚠️ 你的 Quantumult X 版本暂未支持 Vless 节点","请更新app到最新版本",list0[i])
+                  $notify("注意: 你的 Quantumult X 版本暂未支持 Vless 节点","请更新app到最新版本",list0[i])
                 } else if (type == "vless" ) { // version 150 support vless 
                   node=VL2QX(list0[i], Pudp, Ptfo, Pcert0, PTls13)
                 } else if (type == "anytls") { // 2026-04-15 tls 类型支持
                   if (version <914) {
                     Perror = 1 ; // 无需反馈
-                    $notify("⚠️ 你的 Quantumult X 版本暂未支持 anytls 节点","请更新app到最新版本",list0[i])
+                    $notify("注意: 你的 Quantumult X 版本暂未支持 anytls 节点","请更新app到最新版本",list0[i])
                   } else {
                     node=Anytls2QX(list0[i],Pcert0)
                   }
@@ -2216,7 +2213,7 @@ function Subs2QX(subs, Pudp, Ptfo, Pcert0, PTls13) {
         }
     }
     if (failedList.length > 0 && Pntf0 != 0) {
-        $notify(`⚠️ 有 ${failedList.length} 条数据解析失败, 已忽略`, "出错内容👇", failedList.join("\n"));
+        $notify(`注意: 有 ${failedList.length} 条数据解析失败, 已忽略`, "出错内容如下", failedList.join("\n"));
     }
     //$notify("QXList","check below content",QXlist)
     return QXlist;
@@ -2395,7 +2392,7 @@ function VR2QX(subs, Pudp, Ptfo, Pcert0, PTls13) {
   } else if (obfs=="grpc" || obfs =="h2") {
     Perror = 1 // 不需要反馈的类型
     if (Pntf0!=0) {
-    $notify( "⚠️ Quantumult X 暂不支持该类型节点", "已忽略以下 grpc|h2 vmess 节点",subs)
+    $notify( "注意: Quantumult X 暂不支持该类型节点", "已忽略以下 grpc|h2 vmess 节点",subs)
   }
     pdrop = 1
   }
@@ -2525,7 +2522,7 @@ function Fobfs(jsonl, Pcert0, PTls13) {
     return obfsi.join(", ")
   } else if (jsonl.net !="tcp" && jsonl.net !="none" &&  jsonl.net != undefined){ // 过滤掉 h2/http 等类型
     Perror = 1
-    $notify("⚠️ Quantumult X 不支持该类型节点", "vmess + " + jsonl.net, JSON.stringify(jsonl))
+    $notify("注意: Quantumult X 不支持该类型节点", "vmess + " + jsonl.net, JSON.stringify(jsonl))
     return "NOT-SUPPORTTED"
   } else if ((jsonl.net == "tcp" || jsonl.net == "none") && jsonl.type != undefined && jsonl.type != "none" && jsonl.type != "" && jsonl.type != "vmess") {
     return "NOT-SUPPORTTED"
@@ -2598,18 +2595,18 @@ function Filter(servers, Pin, Pout) {
     var no1 = Nlist.length <= 10 ? emojino[Nlist.length] : Nlist.length;
     if (Pntf0 == 1 && Delist.length >= 1) {//通知部分
         if (Pin && no1 > 0) { //有 in 参数就通知保留部分
-            $notify("👥 引用" + "⟦" + subtag + "⟧" + " 开始节点筛选", "🕹 筛选关键字: " + pfi + pfo, "☠️ 已保留以下 " + no1 + "个节点\n" + Nname.join(", "), sub_link);
+            $notify("引用" + "[" + subtag + "]" + " 开始节点筛选", "筛选关键字: " + pfi + pfo, "已保留以下 " + no1 + "个节点\n" + Nname.join(", "), sub_link);
         } else if (Pout && no > 0) {
-            $notify("👥 引用" + "⟦" + subtag + "⟧" + " 开始节点筛选", "🕹 筛选关键字: " + pfi + pfo, "☠️ 已删除以下 " + no + "个节点\n" + Delist.join(", "), sub_link);
+            $notify("引用" + "[" + subtag + "]" + " 开始节点筛选", "筛选关键字: " + pfi + pfo, "已删除以下 " + no + "个节点\n" + Delist.join(", "), sub_link);
         }
     } else if (no1 == 0 || no1 == null) { //无剩余节点时强制通知
-        $notify("‼️ ⟦" + subtag + "⟧" + "筛选后节点数为0️⃣", "⚠️ 请自行检查原始链接以及筛选参数", link0, sub_link);
+        $notify("注意: [" + subtag + "]" + "筛选后节点数为0", "注意: 请自行检查原始链接以及筛选参数", link0, sub_link);
     }
     return Nlist
 }
 
 function FilterScript(servers, script) {
-    $notify("🤖 启用脚本进行筛选", "", script);
+    $notify("启用脚本进行筛选", "", script);
     try {
         const $ = Tools();
         eval(script);
@@ -2618,11 +2615,11 @@ function FilterScript(servers, script) {
         const IN = filter(nodes);
         const res = servers.filter((_, i) => IN[i]);
         if (res.length === 0) {
-            $notify("‼️ ⟦" + subtag + "⟧" + "筛选后节点数为0️⃣", "⚠️ 请自行检查原始链接以及筛选参数", link0, sub_link);
+            $notify("注意: [" + subtag + "]" + "筛选后节点数为0", "注意: 请自行检查原始链接以及筛选参数", link0, sub_link);
         }
         return res;
     } catch (err) {
-        $notify("❌ 脚本筛选出现错误", "", err);
+        $notify("错误: 脚本筛选出现错误", "", err);
         return servers;
     }
 }
@@ -2952,7 +2949,7 @@ try {
   return cntii
 } catch (err) {
   if(Perror == 0) {
-  $notify("❌ 解析出现错误,已忽略该条目", "⚠️ 请点击通知，发送订阅链接进行反馈", cntf+"\n"+ err, bug_link);
+  $notify("错误: 解析出现错误,已忽略该条目", "注意: 请点击通知，发送订阅链接进行反馈", cntf+"\n"+ err, bug_link);
 }
 }
   return ""
@@ -3153,7 +3150,7 @@ function Rename(str) {
 }
 
 function RenameScript(servers, script) {
-    $notify("🤖 启用脚本进行重命名", "", script);
+    $notify("启用脚本进行重命名", "", script);
     try {
         const $ = Tools().rename;
         // extract server tags
@@ -3163,7 +3160,7 @@ function RenameScript(servers, script) {
         // rename nodes
         return servers.map((s, i) => s.split("tag=")[0] + "tag=" + newNames[i]);
     } catch (err) {
-        $notify("❌ 脚本重命名出现错误", "", err);
+        $notify("错误: 脚本重命名出现错误", "", err);
         return servers;
     }
 
@@ -3406,7 +3403,7 @@ function Surge2QX(conf) {
 
 
 // surge2 中的 SS 类型写法(custom)
-//🇷🇺 俄罗斯 GIA = custom, ip, 152, aes-128-gcm, password123, https://xxx/download/SSEncrypt.module, obfs=tls, obfs-host=xxx.windows.com, udp-relay=true
+// 俄罗斯 GIA = custom, ip, 152, aes-128-gcm, password123, https://xxx/download/SSEncrypt.module, obfs=tls, obfs-host=xxx.windows.com, udp-relay=true
 function SCT2QX(content) {
     var cnt = content;
     var tag = "tag=" + cnt.split("=")[0].trim();
@@ -3689,7 +3686,7 @@ function LoonTLS2QX(content) {
 
 function YAMLFix(cnt){
   cnt = cnt.replace(/\[/g,"yaml@bug𝟙").replace(/\\r/g,"").replace(/\*/g,"yaml@bug𝟚")
-  //2022-08-08 增加 .replace(/\*/g,"🌟@bug2") 以解决名字以 * 开始时引起的部分问题
+  //2022-08-08 增加 .replace(/\*/g,"star@bug2") 以解决名字以 * 开始时引起的部分问题
   if (cnt.indexOf("{") != -1 && /\{\s*\"*(name|type|server)/.test(cnt)){ // - { } 类型 yaml
     cnt =  cleanYamlSpaces(cnt) // 2026-02-06 部分空格解析错误
     cnt = cnt.replace(/(^|\n)- /g, "$1  - ").replace(/    - /g,"  - ").replace(/:(?!\s)/g,": ").replace(/\,\"/g,", \"").replace(/: {\s{0,1}/g, ": {,   ").replace(/, (Host|host|path|mux)/g,",   $1")
@@ -3702,7 +3699,7 @@ function YAMLFix(cnt){
     if(Pdbg == 1) {
   $notify("part-fix0:","","part-fix0:\nproxies:\n"+cnt.split("proxies:")[1])}
   // 缩进修正
-  // old 2023-03-23  👇修正部分类型 
+  // old 2023-03-23  如下修正部分类型 
   // cnt = cnt.replace(/\n\s{2}([a-zA-Z]+.*\:)/g,"\n    $1").replace(/\n(\-.*)/g,"\n  $1")
   //new  2026-01-08 
   cnt = /\n\-\s[a-zA-Z]/.test(cnt)? cnt.replace(/\n(.*(\:|\-))/g,"\n  $1"):cnt.replace(/\n\s{2}([a-zA-Z]+.*\:)/g,"\n    $1").replace(/\n(\-.*)/g,"\n  $1")
@@ -3713,9 +3710,9 @@ function YAMLFix(cnt){
   items=cnt.split("\n").map(yamlcheck)
   cnt=items.join("\n")
   //console.log(cnt.replace(/name\:(.*?)\:(.*?)\n/gmi,"name:$1冒号$2"))
-  //2022-05-11 增加⬇️
+  //2022-05-11 增加如下
   //cnt = cnt.replace(/\n\s{4}headers/g,"\n      headers").replace(/\n\s{6}(H|h)ost/g,"\n        Host").replace(/\t/g,"")
-  //2022-06-07 修改为👇，解决部分无 proxies 字段的
+  //2022-06-07 修改为如下，解决部分无 proxies 字段的
   //2022-09-01 remove host in s{6}(H|h)ost
   //cnt = cnt.indexOf("proxies:") != -1?cnt.replace(/\n\s{4}headers/g,"\n      headers").replace(/\n\s{6}Host/g,"\n        Host").replace(/\t/g,""):cnt
   //2022-11-29 修改
@@ -3977,8 +3974,8 @@ function Clash2QX(cnt) {
       nodelist.push(node)
     } 
     }catch (e) {
-      $notify(`⚠️该节点解析错误, 暂时已忽略处理`,`可点击通知并发送链接反馈至 bot`,JSON.stringify(node),bug_link )
-      $notify(`⚠️错误内容如下`,`可复制错误内容到反馈 bot`,JSON.stringify(node)+"\n\n"+e)
+      $notify(`注意:该节点解析错误, 暂时已忽略处理`,`可点击通知并发送链接反馈至 bot`,JSON.stringify(node),bug_link )
+      $notify(`注意:错误内容如下`,`可复制错误内容到反馈 bot`,JSON.stringify(node)+"\n\n"+e)
     }
   }
   return nodelist.join("\n")
