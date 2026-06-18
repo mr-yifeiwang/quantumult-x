@@ -17,18 +17,7 @@ const inRetry = currentUA && currentUA.length > 0;
 var  UARetry = 0;
 
 
-const result = {
-      // Normal parse result (kept for old-version compat;
-      // new versions ignore this when retry fires)
-      content: "",
-      // or error: "..."
-  };
-
-//
-
-
-
-let [link0, content0, subinfo] = [$resource.link, $resource.content, $resource.info]
+let [link0, content0] = [$resource.link, $resource.content]
 
 let Perror = 0 //错误类型
 
@@ -53,30 +42,17 @@ content0 = link0.indexOf("nsloon.com/openloon/import?plugin=") != -1 ? ToLink(li
 //ends 正常使用部分，調試註釋此部分
 
 
-var Pinfo = 0;
-var ntf_flow = 0;
 //常用量
 const Base64 = new Base64Code();
-const escapeRegExp = str => str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'); //处理特殊符号以便正则匹配使用
 var link1 = link0.split("#")[0]
 const qxpng = "https://raw.githubusercontent.com/crossutility/Quantumult-X/master/quantumult-x.png" // server sub-info link
-const subinfo_link = { "open-url": "https://t.me/QuanX_API", "media-url": "https://shrtm.nu/ebAr" };
-const subinfo_link1 = { "open-url": link1, "media-url": "https://shrtm.nu/uo13" } // server sub-info link(fake-nodes)
 const rwrite_link = { "open-url": link1, "media-url": "https://shrtm.nu/x3o2" } // rewrite filter link
-const rwhost_link = { "open-url": link1, "media-url": "https://shrtm.nu/0n5J" } // hostname filter link
-const rule_link = { "open-url": link1, "media-url": "https://shrtm.nu/cpHD" } // rule filter link
 const nan_link = { "open-url": link1, "media-url": qxpng } // nan error link
 const bug_link = { "open-url": "https://t.me/ShawnKOP_Parser_Bot", "media-url": "https://shrtm.nu/obcB" } // bug link
-const sub_link = { "open-url": link1, "media-url": "https://shrtm.nu/ebAr" } // server link
 const update_link = {"open-url" : "https://apps.apple.com/us/app/quantumult-x/id1443988620", "media-url": qxpng}
 const plink0 = {"open-url" : link0, "media-url": qxpng} // 跳转订阅链接
 
 if(version == 0) { $notify("注意: 请更新 Quantumult X 至最新商店版本\n"," 当前版本可能无法正常使用部分功能","\n 点击跳转商店链接更新",update_link) }
-
-
-
-SubFlow() //流量通知
-
 
 // User-controlled URL/customization parameters are disabled.
 var Pudp0 = 0;
@@ -86,11 +62,7 @@ var Pcert0 = 0;
 var PTls13 = 0;
 var Pntf0 = 2;
 var emojino = ["0️⃣", "1⃣️", "2⃣️", "3⃣️", "4⃣️", "5⃣️", "6⃣️", "7⃣️", "8⃣️", "9⃣️", "🔟"]
-var pfi = ""
-var pfo = ""
-var pfihn = ""
-var pfohn = ""
-let [flow, exptime, errornode, total] = "";
+let [errornode, total] = "";
 var typeU = "";
 var typeQ = $resource.type? $resource.type:"unsupported"   //返回 field 类型参数
 var typec="" //check result type
@@ -99,7 +71,6 @@ var Pjsonjq = version>=845? 0 : 1 // allow jsonjq from version 845
 var PNS=0 // 不支持的节点统计
 var NSList=["当前订阅内，不支持以下节点 ↘️ \n"] // 不支持节点列表
 
-var RegoutList= [] ;//用于 regout参数删选提醒
 // URL-Scheme 增加配置
 var ADDres = `quantumult-x:///add-resource?remote-resource=url-encoded-json`
 var RLink = `{
@@ -345,50 +316,10 @@ function ResourceParse() {
   
 }
 
-//响应头流量处理部分
-function SubFlow() {
-  if (Pinfo == 1 && subinfo) {
-    var sinfo = subinfo.replace(/ /g, "").toLowerCase();
-    var total = "总流量: " + (parseFloat(sinfo.split("total=")[1].split(",")[0]) / (1024 ** 3)).toFixed(2) + "GB";
-    var usd = "已用流量: " + ((parseFloat(sinfo.indexOf("upload")!=-1?sinfo.split("upload=")[1].split(",")[0]:"0") + parseFloat(sinfo.split("download=")[1].split(",")[0])) / (1024 ** 3)).toFixed(2) + "GB"
-    var left = "剩余流量: " + ((parseFloat(sinfo.split("total=")[1].split(",")[0]) / (1024 ** 3)) - ((parseFloat(sinfo.indexOf("upload")!=-1?sinfo.split("upload=")[1].split(",")[0]:"0") + parseFloat(sinfo.split("download=")[1].split(",")[0])) / (1024 ** 3))).toFixed(2) + "GB"
-    if (sinfo.indexOf("expire=") != -1) {
-      var epr = new Date(parseFloat(sinfo.split("expire=")[1].split(",")[0]) * 1000);
-      var year = epr.getFullYear();  // 获取完整的年份(4位,1970)
-      var mth = epr.getMonth() + 1 < 10 ? '0' + (epr.getMonth() + 1) : (epr.getMonth() + 1);  // 获取月份(0-11,0代表1月,用的时候记得加上1)
-      var day = epr.getDate() < 10 ? "0" + (epr.getDate()) : epr.getDate();
-      epr = "过期时间: " + year + "-" + mth + "-" + day
-    } else {
-      epr = ""; //"过期时间: 未提供该信息" //没过期时间的显示订阅链接
-    }
-    var message = total + "\n" + usd + ", " + left;
-    ntf_flow = 1;
-    $notify("流量信息: [" + subtag + "]", epr, message, subinfo_link)
-  }
-}
-
-//flowcheck-fake-server
-function flowcheck(cnt) {
-    for (var i = 0; i < cnt.length; i++) {
-        var item = cnt[i];
-        var nl = item.slice(item.indexOf("tag"))
-        var nm = nl.slice(nl.indexOf("=") + 1)
-        if (item.indexOf("剩余流量") != -1) {
-            flow = nm
-        } else if (item.indexOf("期时间") != -1) {
-            exptime = nm
-        }
-    }
-  flow = flow? flow:"该订阅未返回任何流量信息"
-  exptime = exptime? exptime:"该订阅未返回套餐时间信息"
-    if (flow != "") { $notify("流量信息: [" + subtag + "]", flow, exptime, subinfo_link1) }
-}
-
 //判断订阅类型
 function Type_Check(subs) {
     var type = "unknown"
     var RuleK = ["host,", "-suffix,", "domain,", "-keyword,", "ip-cidr,", "ip-cidr6,",  "geoip,", "user-agent,", "ip6-cidr,", "ip-asn"];
-    var DomainK = ["domain-set,"]
     var QuanXK = ["shadowsocks=", "trojan=", "vmess=", "http=", "socks5=", "vless=","anytls="];
     var SurgeK = ["=ss,", "=vmess,", "=trojan,", "=http,", "=custom,", "=https,", "=shadowsocks", "=shadowsocksr", "=sock5", "=sock5-tls","=anytls"];
     var ClashK = ["proxies:","\"proxies\":"]
@@ -769,55 +700,6 @@ function Rewrite_Filter(subs) {
     Nlist = Nlist
     return Nlist
 }
-
-// 主机名处理
-function HostNamecheck(content) {
-    var hname = content.replace(/ /g, "").split("=")[1].split(",");
-    var nname = [];
-    var dname = []; //删除项
-    for (var i = 0; i < hname.length; i++) {
-        dd = hname[i]
-        const excludehn = (item) => dd.indexOf(item) != -1;
-        if (paraout && paraout != "") { //存在 out 参数时
-            if (!paraout.some(excludehn)) { //out 未命中
-                if (parain && parain != "") {
-                    if (parain.some(excludehn)) { //Pin 命中
-                        nname.push(hname[i])
-                    } else {
-                        dname.push(hname[i])
-                    } //Pin 未命中的记录
-                } else { nname.push(hname[i]) } //无in 参数    
-            } else { dname.push(hname[i]) } //out 参数命中
-        } else if (parain && parain != "") { //不存在 out，但有 in 参数时
-            if (parain.some(excludehn)) { //Pin 命中
-                nname.push(hname[i])
-            } else { dname.push(hname[i]) }
-        } else {
-            nname.push(hname[i])
-        }
-    } //for j
-    if (nname.length == 0) {
-        $notify("重写引用 -> " + "[" + subtag + "]", "主机名 hostname 中剩余 0 项", "注意: 请检查原始链接", nan_link)
-    }
-    hname = "hostname=" + nname.join(", ");
-    return hname
-}
-
-//Rewrite 筛选的函数
-function Rcheck(content, param) {
-    name = content.toUpperCase()
-    if (param) {
-        var flag = 0; //没命中
-        const checkpara = (item) => name.indexOf(item.toUpperCase()) != -1;
-        if (param.some(checkpara)) {
-            flag = 1 //命中
-        }
-        return flag
-    } else { //if param
-        return 2
-    } //无参数
-}
-
 //分流规则转换及过滤(in&out)，可用于 surge 及 quanx 的 rule-list
 function Rule_Handle(subs) {
     cnt = subs //.split("\n");
@@ -917,59 +799,6 @@ function rule_list_handle(cnt) {
   }
   return cnt
 }
-
-// Domain-Set
-function Domain2Rule(content) {
-    var cnt = content.split("\n");
-    var RuleK = ["//", "#", ";","["]
-    var nlist = []
-    for (var i = 0; i< cnt.length; i++) {
-        cc = cnt[i].trim();
-        const RuleCheck = (item) => cc.indexOf(item) != -1; //无视注释行
-        if(!RuleK.some(RuleCheck) && cc) {
-            if (cc[0] == "."){
-                nlist.push("host-suffix, " + cc.slice(1 , cc.length) )
-            } else {
-                nlist.push("host, " + cc )
-            }
-        }
-    }
-    return nlist.join("\n")
-}
-// filter 正则指定替换 regex1@policy1+regex2@policy2
-function policy_sets(cnt,para) {
-  pcnt = para.split("+")
-  cnt=cnt//.split("\n")
-  for (i=0;i<pcnt.length;i++){
-    console.log(pcnt[i])
-    if (pcnt[i].indexOf("@")!=-1){
-      cnt = cnt.map(item => filter_set(item, pcnt[i]))
-    }
-  }
-  cnt=cnt.filter(Boolean)//.join("\n")
-  return cnt
-  console.log(cnt)
-}
-
-//策略指定
-function filter_set(cnt,para){
-  if (cnt){
-    paras=[para.split("@")[0],para.slice(para.split("@")[0].length+"@".length)]
-    console.log(para.split("@")[0].length+"@".length,paras)
-    cnt = cnt.split(",")
-    reg = RegExp(paras[0])
-    console.log(paras,cnt)
-    if(cnt.length == 3){
-      if (reg.test(cnt[1]) || reg.test(cnt[2])) {
-        cnt[2] = paras[1]
-      }
-    }
-    return cnt.join(",")
-  }
-}
-
-
-
 // read parameters 2026-05-17
 function param(res,org,mbody) {
   if(mbody.indexOf(org)!=-1) {
@@ -1383,62 +1212,6 @@ function Fobfs(jsonl, Pcert0, PTls13) {
   } else if ((jsonl.net == "tcp" || jsonl.net == "none") && jsonl.type != undefined && jsonl.type != "none" && jsonl.type != "" && jsonl.type != "vmess") {
     return "NOT-SUPPORTTED"
   } else {return ""}
-}
-
-//对.的特殊处理(in/out & rename中)
-function Dot2(cnt) {
-    cnt = cnt ? cnt.replace(/\\\./g, "这是个点") : ""
-    return cnt
-}
-
-function ToDot(cnt) {
-    cnt = cnt ? cnt.replace(/这是个点/g, ".") : ""
-    return cnt
-}
-
-// 判断节点过滤的函数
-function Scheck(content, param) {
-    name = content.replace(/tag\s*\=/g,"tag=").split("tag=")[1].toUpperCase()
-    param = param ? param.map(Dot2) : param // 对符号.的特殊处理
-    if (param) {
-        var flag = 0;
-        for (var i = 0; i < param.length; i++) {
-            var params = param[i].split(".").map(ToDot);
-            const checkpara = (item) => name.indexOf(item.toUpperCase()) != -1;
-            if (params.every(checkpara)) {
-                flag = 1
-            }
-        }//for
-        return flag
-    } else { //if param
-        return 2
-    }
-}
-
-//节点过滤，使用+连接多个关键词(逻辑"或"):in 为保留，out 为排除, "与"逻辑请用符号"."连接
-function Filter(servers, Pin, Pout) {
-    var Nlist = [];
-    var Delist = [];
-    var Nname = [];
-    servers = servers.filter(Boolean)
-    for (var i = 0; i < servers.length; i++) {
-        if (Scheck(servers[i], Pin) != 0 && Scheck(servers[i], Pout) != 1) {
-            Nlist.push(servers[i])
-            Nname.push(servers[i].replace(/ /g, "").split("tag=")[1])
-        } else { Delist.push(servers[i].replace(/ /g, "").split("tag=")[1]) } //记录未被保留节点
-    }//for
-    var no = Delist.length <= 10 ? emojino[Delist.length] : Delist.length;
-    var no1 = Nlist.length <= 10 ? emojino[Nlist.length] : Nlist.length;
-    if (Pntf0 == 1 && Delist.length >= 1) {//通知部分
-        if (Pin && no1 > 0) { //有 in 参数就通知保留部分
-            $notify("引用" + "[" + subtag + "]" + " 开始节点筛选", "筛选关键字: " + pfi + pfo, "已保留以下 " + no1 + "个节点\n" + Nname.join(", "), sub_link);
-        } else if (Pout && no > 0) {
-            $notify("引用" + "[" + subtag + "]" + " 开始节点筛选", "筛选关键字: " + pfi + pfo, "已删除以下 " + no + "个节点\n" + Delist.join(", "), sub_link);
-        }
-    } else if (no1 == 0 || no1 == null) { //无剩余节点时强制通知
-        $notify("注意: [" + subtag + "]" + "筛选后节点数为0", "注意: 请自行检查原始链接以及筛选参数", link0, sub_link);
-    }
-    return Nlist
 }
 
 //a.c.com:0031:origin:aes-256-gcm:plain:pwdpwd/?obfsparam=&remarks=xxxx
@@ -2185,59 +1958,6 @@ function yamlcheck(cnt){
   }
 }
 
-//2026-01-07
-
-/**
-* 将不规范的 JS 对象字符串转换为标准 JSON 对象
-*/
-function superMagicParse(str) {
-  let s = str;
-  $notify(1,1,s)
-  // 1. 结构修复：解决你的 "...right"]" 缺少 "}" 的问题
-  // 逻辑：如果发现 冒号+值+"]" 的组合，说明少了一个 "}"，把它变成 "}]"
-  // (这里兼容了值带引号或不带引号的情况)
-  s = s.replace(/(:\s*(?:".*?"|[^,}\]]+?))\s*]/g, '$1}]');
-  $notify(1,2,s)
-  // 2. 补全 Key 的引号
-  // 逻辑：匹配 { 或 , 开头，后面跟着“非冒号的任意字符”，直到冒号为止
-  // 允许 key 中包含字母、数字、下划线、横杠 - 等
-  s = s.replace(/([{\s,])([a-zA-Z0-9_\-]+)\s*:/g, '$1"$2":');
-  
-  // 3. 补全 Value 的引号 (核心修改部分)
-  // 逻辑：匹配 冒号，后面捕获“非引号、非逗号、非括号”的一串字符
-  s = s.replace(/:\s*([^",}\]]+?)\s*(?=[,}\]])/g, (match, rawValue) => {
-    const val = rawValue.trim();
-    
-    // A. 如果是纯数字，保持原样 (支持负数和小数)
-    if (!isNaN(Number(val))) {
-      return `:${val}`;
-    }
-    
-    // B. 如果是关键字，保持原样
-    if (['true', 'false', 'null', 'undefined'].includes(val)) {
-      return `:${val}`;
-    }
-    
-    // C. 其他情况（包括带 - 的字符串、UUID、日期等），全部加上双引号
-    return `:"${val}"`;
-  });
-  $notify(1,3,s)
-  // 调试输出，这一步很有用，能让你看到变成什么样了
-  
-  try {
-    return s;//JSON.parse(s);
-  } catch (e) {
-    return null; // 或者返回 undefined
-  }
-}
-
-//yaml string - {} type direct to json 
-function YJSON(cnt) {
-  cnt=cnt.replace(/proxies\:\n.*?\-/g,"{\"proxies\":[").replace(/}\s*\n.*?\-/g,"},").replace(/\n/g,"")+"]}"
-  cnt=superMagicParse(cnt)
-  return cnt
-}
-
 function reorderYamlByNesting(yamlString, decodeUnicode = true) {
   // 如果需要，先解码 Unicode
   if (decodeUnicode) {
@@ -2635,18 +2355,6 @@ function XTFO(cnt,ptfo) {
     }
     return cnt0
 }
-
-
-// udp-over-tcp=true  开启
-function UOT(cnt) {
-  cnts=cnt.replace(/\s*/g,"")
-  if(/^shadowsocks=/.test(cnts)) {
-    cnt= cnts.indexOf("udp-over-tcp")!=-1? cnt.replace(/udp-over-tcp\s*\=\s*false/g,"udp-over-tcp=true") : cnt+", udp-over-tcp=true"
-    
-  }
-  return cnt
-}
-
 //比较完美的一款 base64 encode/decode 工具
 /*
  *  base64.js: https://github.com/dankogai/js-base64#readme
@@ -2713,14 +2421,6 @@ function Base64Code() {
         return isUint8Array ? u.toString('base64')
             : btoa(utob(String(u)));
     }
-    var uriencode = function (u, urisafe) {
-        return !urisafe
-            ? _encode(u)
-            : _encode(String(u)).replace(/[+\/]/g, function (m0) {
-                return m0 == '+' ? '-' : '_';
-            }).replace(/=/g, '');
-    };
-    var encodeURI = function (u) { return uriencode(u, true) };
     // decoder stuff
     var re_btou = /[\xC0-\xDF][\x80-\xBF]|[\xE0-\xEF][\x80-\xBF]{2}|[\xF0-\xF7][\x80-\xBF]{3}/g;
     var cb_btou = function (cccc) {
@@ -2842,17 +2542,6 @@ function YAML() {
 
         // function to create an XMLHttpClient in a cross-browser manner
 
-        function fromURL(src, ondone) {
-                var client = createXMLHTTPRequest();
-                client.onreadystatechange = function() {
-                        if (this.readyState == 4 || this.status == 200) {
-                                var txt = this.responseText;
-                                ondone(YAML.eval0(txt));
-                        }
-                };
-                client.open('GET', src);
-                client.send();
-        }
 
         function parser(str) {
                 var regLevel = regex["regLevel"];
@@ -3207,54 +2896,3 @@ function YAML() {
         }
 
 };
-
-
-/***********************************************************************************************/
-function Tools() {
-    const filter = (src, ...regex) => {
-        const initial = [...Array(src.length).keys()].map(() => false);
-        return regex.reduce((a, expr) => OR(a, src.map(item => expr.test(item))), initial)
-    }
-
-    const rename = {
-        replace: (src, old, now) => {
-            return src.map(item => item.replace(old, now));
-        },
-
-        delete: (src, ...args) => {
-            return src.map(item => args.reduce((now, expr) => now.replace(expr, ''), item));
-        },
-
-        trim: (src) => {
-            return src.map(item => item.trim().replace(/[^\S\r\n]{2,}/g, ' '));
-        }
-    }
-
-    const getNodeInfo = servers => {
-        const nodes = {
-            names: servers.map(s => s.split("tag=")[1]),
-            types: servers.map(s => {
-                const type = s.match(/^(vmess|trojan|shadowsocks|http)=/);
-                return type ? type[1] : 'unknown';
-            })
-        };
-        return nodes;
-    }
-
-
-    return {
-        filter, rename, getNodeInfo
-    }
-}
-
-function AND(...args) {
-    return args.reduce((a, b) => a.map((c, i) => b[i] && c));
-}
-
-function OR(...args) {
-    return args.reduce((a, b) => a.map((c, i) => b[i] || c))
-}
-
-function NOT(array) {
-    return array.map(c => !c);
-}
