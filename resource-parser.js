@@ -47,7 +47,7 @@ const Base64 = new Base64Code();
 var link1 = link0.split("#")[0]
 const qxpng = "https://raw.githubusercontent.com/crossutility/Quantumult-X/master/quantumult-x.png" // server sub-info link
 const nan_link = { "open-url": link1, "media-url": qxpng } // nan error link
-const bug_link = { "open-url": "https://t.me/ShawnKOP_Parser_Bot", "media-url": "https://shrtm.nu/obcB" } // bug link
+const bug_link = nan_link // local error notification link
 const update_link = {"open-url" : "https://apps.apple.com/us/app/quantumult-x/id1443988620", "media-url": qxpng}
 const plink0 = {"open-url" : link0, "media-url": qxpng} // 跳转订阅链接
 
@@ -179,17 +179,17 @@ function Parser() {
       
     } catch (err) {
       if(Perror == 0) {
-      $notify("错误: 解析出现错误", "注意: 请点击通知，发送订阅链接进行反馈", err, bug_link);
+      $notify("错误: 解析出现错误", "注意: 请自行检查订阅链接或内容", err, bug_link);
     }
     }
   } else if (type0 == "wrong-field"){
     if (version >= 670 && typec!="") { //尝试跳转到正确类型
       RLink0[Field[typec]].push($resource.link+", opt-parser=true, tag=下次添加资源可长按") //  跳转URI-Scheme
       var flink = ADDRes.replace(/url-encoded-json/,encodeURIComponent(JSON.stringify(RLink0)))
-      const bug_linkx = { "open-url": flink, "media-url": "https://shrtm.nu/obcB" } // bug linkx
-    $notify( "注意: 请点击通知跳转尝试添加到正确类型中","错误: 检测类型["+typec+"]"+"与填入类型"+"["+typeQ+"]冲突", "如果跳转添加仍旧失败，请发送链接反馈解析器bot\n"+$resource.link, bug_linkx)
+      const bug_linkx = { "open-url": flink, "media-url": qxpng } // add-resource link
+    $notify( "注意: 请点击通知跳转尝试添加到正确类型中","错误: 检测类型["+typec+"]"+"与填入类型"+"["+typeQ+"]冲突", "如果跳转添加仍旧失败，请自行检查订阅链接\n"+$resource.link, bug_linkx)
     } else {//旧版本
-    $notify("错误: 检测类型「"+typec+" 」"+"与目标类型"+" 「"+typeQ+" 」冲突", "注意: 请自行检查链接内容，或点击通知发送链接进行反馈", $resource.link, bug_link)
+    $notify("错误: 检测类型「"+typec+" 」"+"与目标类型"+" 「"+typeQ+" 」冲突", "注意: 请自行检查链接内容", $resource.link, bug_link)
     }
     total=""
   } else {
@@ -215,9 +215,9 @@ function ParseUnknown(cnt){
     
   } catch {
     if (!/error|block|invalid|support/.test(cnt.toLowerCase())) {
-    $notify(" 未能识别订阅 " + "[" + subtag + "] 的内容",  "注意: 将尝试直接导入Quantumult X \n 如认为是 BUG, 请点通知跳转并 [发送链接] 反馈", "订阅返回内容: 如下 \n"+cnt, bug_link);
+    $notify(" 未能识别订阅 " + "[" + subtag + "] 的内容",  "注意: 将尝试直接导入Quantumult X \n 请自行检查原始链接或返回内容", "订阅返回内容: 如下 \n"+cnt, bug_link);
   } else {
-    $notify("[" + subtag + "] 返回内容无效",  "请自行检查订阅，不要反馈无效内容", "订阅返回内容: \n"+cnt, plink0);
+    $notify("[" + subtag + "] 返回内容无效",  "请自行检查订阅内容", "订阅返回内容: \n"+cnt, plink0);
   }
 }
 }
@@ -293,7 +293,7 @@ function ResourceParse() {
         }
         
       } else { // 其它原因
-        $notify("该订阅 -> "+ "[" + subtag + "] 解析后无有效节点", "注意: 解析后 Quantumult-X 支持节点数为 0 条", "请自行检查相关参数、确认节点类型, 或者点击通知跳转并发送链接反馈", bug_link)
+        $notify("该订阅 -> "+ "[" + subtag + "] 解析后无有效节点", "注意: 解析后 Quantumult-X 支持节点数为 0 条", "请自行检查相关参数、确认节点类型", bug_link)
       } 
     }
       total = errornode
@@ -394,8 +394,8 @@ function Type_Check(subs) {
       typec = "profile"
       type = "profile"  //默认配置类型
     }else if (/\.js/.test(link0)) { // xjb添加js脚本的行为
-      Perror = 1 ; // 无需反馈
-      $notify("注意: 你导入的链接内容为 JS 脚本","脚本内未有重写规则，无法解析使用", "请不要将此类内容反馈给解析器 bot\n"+link0)
+      Perror = 1 ; // handled locally
+      $notify("注意: 你导入的链接内容为 JS 脚本","脚本内未有重写规则，无法解析使用", "请自行检查该脚本链接\n"+link0)
       type = "JS-0"
     } else if (typeQ =="server" && subs.length>100) { // 一些未知的b64 encode server case
       typec="server-b64-unknown"
@@ -861,13 +861,13 @@ function Subs2QX(subs, Pudp, Ptfo, Pcert0, PTls13) {
                         node = tag0 != "" ? URI_TAG(node, tag0) : node
                     }
                 } else if (type == "vless" && version<821) {
-                  Perror = 1 ; // 无需反馈
+                  Perror = 1 ; // handled locally
                   $notify("注意: 你的 Quantumult X 版本暂未支持 Vless 节点","请更新app到最新版本",list0[i])
                 } else if (type == "vless" ) { // version 150 support vless 
                   node=VL2QX(list0[i], Pudp, Ptfo, Pcert0, PTls13)
                 } else if (type == "anytls") { // 2026-04-15 tls 类型支持
                   if (version <914) {
-                    Perror = 1 ; // 无需反馈
+                    Perror = 1 ; // handled locally
                     $notify("注意: 你的 Quantumult X 版本暂未支持 anytls 节点","请更新app到最新版本",list0[i])
                   } else {
                     node=Anytls2QX(list0[i],Pcert0)
@@ -1058,7 +1058,7 @@ function VR2QX(subs, Pudp, Ptfo, Pcert0, PTls13) {
     host = host!="{}" && host ? "obfs-host=" + host + ", " : ""
     obfs = obfs + host
   } else if (obfs=="grpc" || obfs =="h2") {
-    Perror = 1 // 不需要反馈的类型
+    Perror = 1 // handled locally
     if (Pntf0!=0) {
     $notify( "注意: Quantumult X 暂不支持该类型节点", "已忽略以下 grpc|h2 vmess 节点",subs)
   }
@@ -1509,7 +1509,7 @@ try {
   return cntii
 } catch (err) {
   if(Perror == 0) {
-  $notify("错误: 解析出现错误,已忽略该条目", "注意: 请点击通知，发送订阅链接进行反馈", cntf+"\n"+ err, bug_link);
+  $notify("错误: 解析出现错误,已忽略该条目", "注意: 请自行检查订阅链接或内容", cntf+"\n"+ err, bug_link);
 }
 }
   return ""
@@ -2086,8 +2086,8 @@ function Clash2QX(cnt) {
         nodelist.push(node)
       }
     } catch (e) {
-      $notify(`注意:该节点解析错误, 暂时已忽略处理`,`可点击通知并发送链接反馈至 bot`,JSON.stringify(node),bug_link )
-      $notify(`注意:错误内容如下`,`可复制错误内容到反馈 bot`,JSON.stringify(node)+"\n\n"+e)
+      $notify(`注意:该节点解析错误, 暂时已忽略处理`,`请自行检查该节点内容`,JSON.stringify(node),bug_link )
+      $notify(`注意:错误内容如下`,`请自行检查错误内容`,JSON.stringify(node)+"\n\n"+e)
     }
   }
   return nodelist.join("\n")
