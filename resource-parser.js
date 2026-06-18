@@ -45,11 +45,10 @@ content0 = link0.indexOf("nsloon.com/openloon/import?plugin=") != -1 ? ToLink(li
 //常用量
 const Base64 = new Base64Code();
 var link1 = link0.split("#")[0]
-const qxpng = "https://raw.githubusercontent.com/crossutility/Quantumult-X/master/quantumult-x.png" // server sub-info link
-const nan_link = { "open-url": link1, "media-url": qxpng } // nan error link
+const nan_link = { "open-url": link1 } // nan error link
 const bug_link = nan_link // local error notification link
-const update_link = {"open-url" : "https://apps.apple.com/us/app/quantumult-x/id1443988620", "media-url": qxpng}
-const plink0 = {"open-url" : link0, "media-url": qxpng} // 跳转订阅链接
+const update_link = {"open-url" : "https://apps.apple.com/us/app/quantumult-x/id1443988620"}
+const plink0 = {"open-url" : link0} // 跳转订阅链接
 
 if(version == 0) { $notify("注意: 请更新 Quantumult X 至最新商店版本\n"," 当前版本可能无法正常使用部分功能","\n 点击跳转商店链接更新",update_link) }
 
@@ -186,7 +185,7 @@ function Parser() {
     if (version >= 670 && typec!="") { //尝试跳转到正确类型
       RLink0[Field[typec]].push($resource.link+", opt-parser=true, tag=下次添加资源可长按") //  跳转URI-Scheme
       var flink = ADDRes.replace(/url-encoded-json/,encodeURIComponent(JSON.stringify(RLink0)))
-      const bug_linkx = { "open-url": flink, "media-url": qxpng } // add-resource link
+      const bug_linkx = { "open-url": flink } // add-resource link
     $notify( "注意: 请点击通知跳转尝试添加到正确类型中","错误: 检测类型["+typec+"]"+"与填入类型"+"["+typeQ+"]冲突", "如果跳转添加仍旧失败，请自行检查订阅链接\n"+$resource.link, bug_linkx)
     } else {//旧版本
     $notify("错误: 检测类型「"+typec+" 」"+"与目标类型"+" 「"+typeQ+" 」冲突", "注意: 请自行检查链接内容", $resource.link, bug_link)
